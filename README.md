@@ -1,3 +1,6 @@
 # DogsTinder
 
-final project at MTA college
+
+![DogsTinder](DogsTinder/static/images/logo.png)
+
+
