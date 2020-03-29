@@ -27,7 +27,7 @@ config.vm.define "stage" do |stage|
      aws.security_groups = "sg-0f39480a6f4adf517"
      aws.associate_public_ip = true
      override.ssh.username = "ubuntu"
-     override.ssh.private_key_path = "~/.ssh/tiger.pem"
+     override.ssh.private_key_path = "~/.ssh/DogsTinder.pem"
    end
  end
 end
