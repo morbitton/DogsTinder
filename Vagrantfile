@@ -12,12 +12,14 @@ config.vm.define "ubuntu" do |ubuntu|
 end
 
 config.vm.define "stage" do |stage|
+  stage.vagrant.plugins = "libxml2-dev"
+  stage.vagrant.plugins = "vagrant-aws"
   stage.vm.box = "dummy"
   stage.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
   stage.vm.provider :aws do |aws, override|
     
     stage.vm.provider :aws do |aws,override|
-     aws.keypair_name = "DogsTinder"
+     aws.keypair_name = "DogTinder"
      aws.ami = "ami-0987ee37af7792903"
      aws.instance_type = "t2.micro"
      aws.region = "eu-west-1"
@@ -25,7 +27,7 @@ config.vm.define "stage" do |stage|
      aws.security_groups = "sg-0f39480a6f4adf517"
      aws.associate_public_ip = true
      override.ssh.username = "ubuntu"
-     override.ssh.private_key_path = "~/.ssh/DogsTinder.pem"
+     override.ssh.private_key_path = "~/.ssh/DogTinder.pem"
    end
  end
 end
