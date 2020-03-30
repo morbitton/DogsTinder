@@ -12,8 +12,6 @@ config.vm.define "ubuntu" do |ubuntu|
 end
 
 config.vm.define "stage" do |stage|
-  stage.vagrant.plugins = "libxml2-dev"
-  stage.vagrant.plugins = "vagrant-aws"
   stage.vm.box = "dummy"
   stage.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
   stage.vm.provider :aws do |aws, override|
