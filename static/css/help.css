@@ -1,0 +1,45 @@
+		*{
+			box-sizing:border-box;
+			margin:0px;
+		}
+	
+		body{background-image: url('https://www.ynet.co.il/PicServer5/2019/06/12/9303098/93030220990100980654no.jpg'); background-repeat: no-repeat; background-attachment: fixed; background-size: 100% 100%;}
+		
+		a{text-decoration:none;}
+		#right{float:right; font-style:italic; font-size:15px; width:12%; margin-top:0.5%; padding:0.5%; border-radius:45%; }
+		#left{float:left;}
+		
+			header{margin-bottom:5%; overflow:auto; }
+			#big{text-decoration:bold; color:black; font-size:25px; margin-top:-8%; display:inline-block;}
+			#small{margin-left:45%;  color:black;}
+			.answer{ width:35%; display:inline-block; margin:auto;font-size:20px; background-color:white;color:green;margin-top:1%; display:none;}
+			.question{margin-top:-3%; cursor: pointer; display:inline-block;  font-size:25px; font-weight:bold; background-color:lightblue; border-radius:40%;}
+			main{width:80%; margin:auto; text-align:center;}
+			#mail{text-decoration:none;}
+			
+		@media screen and (max-width: 1200px) {
+			#right{width:15%;}
+			.answer{width:40%;}
+		}
+		
+		@media screen and (max-width: 1000px) {
+			#right{width:20%;}
+			.answer{width:50%;}
+			.question{margin-top:-2%;}
+			#q1{margin-top:2%;}
+		}	
+		
+		@media screen and (max-width:800px) {
+			.answer{width:60%;}
+			header{margin-bottom:12%; }
+		}
+		
+		@media screen and (max-width: 650px) {
+			#right{width:5%;}
+			.question{margin-top:0%;}
+			.answer{width:90%;}
+			#q1{margin-top:6%;}
+			#right{width:25%;}
+		}	
+		
+		

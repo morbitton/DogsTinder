@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>TinderDog- create dog profile</title>
+		
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		
+		<link rel="stylesheet" type="text/css" href="../css/create_dog_profile.css">
+
+		<style>
+
+		</style>
+		
+	</head>
+	
+	<body>
+	<header>
+	<a href="homepage.html">
+		<div id="left">
+			<img id="logoPass" src="../images/לוגו פסים.png" alt="logo" height="50" width="60">
+			<p id="big"> <b>DogTinder</b></p>
+			<p id="small"> <b>Swipe.Match.Adopt</b></p>
+		</div> </a>
+	
+		<button id="right" type="button"><a  href="homepage.html">חזור לדף הבית</a></button><br>
+	</header>
+
+	<main>
+	
+	<form id="form3" method="POST" action="" >
+
+		<fieldset id="f1">
+		
+		<legend> מילוי פרטי הכלב </legend>
+		
+		<div>
+		<input class="cls" dir="rtl" type="text" name="dog_name" autofocus required >
+		<label class="lb1"> :שם הכלב*  </label>
+		</div>
+
+		<div>
+		<input class="cls" dir="rtl" type="number" name="chip_number" required>
+		<label class="lb1"> :מספר שבב*  </label>
+		</div>
+		
+		<div>
+		<input class="cls" dir="rtl" type="date" name="brith_date" required>
+		<label class="lb1"> :תאריך לידה* </label>
+		</div>
+		
+		<div>
+		  <select dir="rtl" class="cls" name=":מין*" >
+					<option></option>
+				  <option>זכר</option>
+				  <option>נקבה</option>
+			</select>
+			<label class="lb1"> :מין* </label>
+		</div>
+		
+		
+		<div>
+		<input class="cls" dir="rtl" type="text" name="city" required>
+		<label class="lb1"> :עיר לאיסוף*  </label>
+		</div>
+		
+		<div>
+		<input class="cls" dir="rtl" type="text" name="type" required>
+		<label class="lb1"> :סוג/ גזע  </label>
+		</div>
+		
+		
+		<div>
+		<textarea class="cls"  dir="rtl" cols="40" name="description" rows="2" maxlength="500" placeholder="כגון: תחביבים, התנהגות, גודל, צבע, חיבה לאנשים"></textarea>
+		<label class="lb1" id="imgl"> :תיאור </label>
+		</div>
+		
+		<div>
+		<input class="cls" id="file" dir="rtl" type="file" name="files" required ></textarea>
+		<label class="lb1"> :תמונה 1* </label>
+		</div>
+		
+		<div>
+		<input class="cls" id="file" dir="rtl" type="file" name="img2" ></textarea>
+		<label class="lb1"> :תמונה 2 </label>
+		</div>
+		
+				<div>
+		<input class="cls" id="file" dir="rtl" type="file" name="img3" ></textarea>
+		<label class="lb1"> :תמונה 3 </label>
+		</div>
+
+		<br>
+
+		<p id="must"><b>שדה חובה*</b></p>
+		<br>
+
+			<input class="submit_reset" type="reset" value="אפס טופס" >
+			<input class="submit_reset" type="submit" value=" צור פרופיל" >
+
+
+		</fieldset>
+	</form>
+
+
+	</main>
+		
+		
+
+	</body>
+</html>
