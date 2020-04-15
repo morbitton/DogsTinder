@@ -1,6 +1,6 @@
 Flask
-pyzbar
+mysql-connector-python
 passlib
 flask-debugtoolbar
-mongoengine
+pyzbar
 dnspython
