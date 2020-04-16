@@ -25,11 +25,11 @@ pip3 install -r /vagrant/requirements.txt
     mysql -u root -p"$new_pw" <<MYSQL_SCRIPT
     CREATE DATABASE DogsTinder;
     USE DogsTinder;
-    create table users(username VARCHAR(25) NOT NULL, password VARCHAR(100) NOT NULL, repassword VARCHAR(100) NOT NULL,
+    create table users(username VARCHAR(25) NOT NULL, password VARCHAR(100) NOT NULL, firstName VARCHAR(25) NOT NULL, lastName VARCHAR(25) NOT NULL, 
     phone VARCHAR(11) NOT NULL, email VARCHAR(50) NOT NULL, create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY(username));
-    create table dogs(dog_id int NOT NULL AUTO_INCREMENT, name VARCHAR(25) NOT NULL, age int NOT NULL, type VARCHAR(20) NOT NULL, 
-    area VARCHAR(25) NOT NULL, details TEXT NOT NULL, pic BLOB NOT NULL, primary key(dog_id), foreign key(username) references users(username));
-    INSERT into users(username,password,repassword,phone,email) VALUES('mor','1234','1234','050-8371798','morbitton1993@gmail.com');
+    create table dogs(dog_id VARCHAR(10) NOT NULL, name VARCHAR(25) NOT NULL, bday DATE NOT NULL, gender VARCHAR(9) NOT NULL, city VARCHAR(50) NOT NULL, 
+    type VARCHAR(20) NOT NULL, details TEXT NOT NULL, pic1 BLOB NOT NULL, pic2 BLOB, pic3 BLOB, primary key(dog_id), foreign key(username) references users(username));
+    INSERT into users(username,password,firstName,lastName,phone,email) VALUES('mor','1234','mor','bitton','050-8371798','morbitton1993@gmail.com');
     DESCRIBE users;
     DESCRIBE dogs;
 MYSQL_SCRIPT
