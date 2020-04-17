@@ -59,9 +59,9 @@ def register():
         val = (username, password, firstName, lastName, phone, email)
         mycursor.execute(sql, val)
         conn.commit()
-        # if authenticate_user(username, password):
-        session["USERNAME"] = username
-        session["PASSWORD"] = password
+        if authenticate_user(username, password):
+            session["USERNAME"] = username
+            session["PASSWORD"] = password
         return redirect(url_for('homepage'))
     return render_template('/register.html')
 
@@ -71,10 +71,51 @@ def home():
     return render_template('/home.html')
 
 
-# def authenticate_user(username, password):
-#     if check_username(username, password):
-#         return True
-#     return False
+@app.route('/help')
+def help():
+    return render_template('/help.html')
+
+
+def check_username(username, pas):
+    maulers = conn.cursor()
+    Fender = "SELECT * FROM users"
+    maulers.execute(Fender)
+    result = maulers.fetchall()
+    for user in result:
+        print(user)
+        if user[0] == username:
+            if sha256_crypt.verify(pas, user[1]):
+                return True
+    return False
+
+
+def authenticate_user(username, password):
+    if check_username(username, password):
+        return True
+    return False
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        req = request.form
+        username = req.get("username")
+        password = req.get("password")
+        if authenticate_user(username, password):
+            session["USERNAME"] = username
+            session["PASSWORD"] = password
+            return redirect(url_for('homepage'))
+        else:
+            return redirect(url_for('login'))
+        return render_template('homepage.html',
+                               username=session["USERNAME"])
+    return render_template('/register.html')
+
+
+@app.route('/log_out')
+def log_out():
+    session.clear()
+    return render_template('homepage.html')
 
 
 if __name__ == '__main__':
