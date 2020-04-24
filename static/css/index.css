@@ -14,6 +14,11 @@
 		#already{margin-top:3%; font-size:24px;}
 		#end{margin-top:1%;font-size:18px; background-color:white;display:inline-block; width:15%;}
 		a{text-decoration:none; }
+		#logoPass{
+			height: 60;
+			width: 60;			
+		}
+
 
 
 		@media screen and (max-width: 1200px) {

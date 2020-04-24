@@ -4,20 +4,20 @@
   <meta charset="utf-8" dir="rtl">
   <title>DogTinder</title>
   <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" type="text/css" href="../css/tinder.css">
-  <link rel="stylesheet" type="text/css" href="../css/homepage.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/tinder.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/homepage.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
 <body>
  <div class="topnav" id="myTopnav">
 
-   <a  href="homepage.html"> <img id="logo" src="../images/לוגו.png"></a>
-  <a  href="DogTinder- index.html" class="active">התנתק</a>
+   <a  href="homepage.html"> <img id="logo" src="{{ url_for('static', filename='images/logohebrew.png') }}"></a>
+  <a  href="{{url_for('DogTinder- index') }}" class="active">התנתק</a>
   <a href="#">צ'אט</a>
-  <a href="create_dog_profile.html">הוספת כלב</a>
-  <a href="help.html">עזרה</a>
-   <a href="updateUser.html">עריכת פרופיל</a>
+  <a href="{{url_for('create_dog_profile') }}">הוספת כלב</a>
+  <a href="{{url_for('help') }}">עזרה</a>
+   <a href="{{url_for('updateUser') }}">עריכת פרופיל</a>
     <a href="#"> <i class="fa fa-user" style= "margin-left:10px;"></i>שם משתמש</a>
   
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">

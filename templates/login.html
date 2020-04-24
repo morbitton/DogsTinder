@@ -8,7 +8,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		
-		<link rel="stylesheet" type="text/css" href="../css/login.css">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/login.css') }}">
 
 		<style>
 		
@@ -20,7 +20,7 @@
 	<div id="all">
 	
 	<div id="top">
-	<img id="logoPass" src="../images/לוגו פסים.png" alt="logo" height="60" width="60">
+	<img id="logoPass" src="{{ url_for('static', filename='images/logo_pasim.png') }}" alt="logo" height="60" width="60">
 	<p id="big"> <b>DogTinder</b></p>
 	<p id="small"> <b>Swipe.Match.Adopt</b></p>
 	</div>
@@ -54,7 +54,7 @@
 </form>
 	</div>
 	
-	<button id="backButton" type="button"><a  href="DogTinder- index.html">חזור לדף הקודם</a></button><br>
+	<button id="backButton" type="button"><a  href="{{url_for('DogTinder- index') }}">חזור לדף הקודם</a></button><br>
 	
 	</div>
 
