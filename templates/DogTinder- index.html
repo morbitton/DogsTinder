@@ -8,7 +8,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		
-		<link rel="stylesheet" type="text/css" href="../css/index.css">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/index.css') }}">
 
 		<style>
 		
@@ -20,16 +20,16 @@
 	<div id="all">
 	
 	<div id="top">
-	<img id="logoPass" src="../images/לוגו פסים.png" alt="logo" height="60" width="60">
+	<img id="logoPass" src="{{ url_for('static', filename='images/logo_pasim.png') }} alt="logo" height="60" width="60">
 	<p id="big"> <b>DogTinder</b></p>
 	<p id="small"> <b>Swipe.Match.Adopt</b></p>
 	</div>
 	
 	<div id="down">
-	<button id="buttonText" type="button"><a  href="register.html"> הרשמה</a></button><br>
+	<button id="buttonText" type="button"><a  href="{{url_for('register') }}"> הרשמה</a></button><br>
 	
 	<p id="already"><b>?כבר יש לך משתמש</b></p>
-	<p id="end"><a href="login.html"><b> התחברות</b></a></p>
+	<p id="end"><a href="{{url_for('login') }}"><b> התחברות</b></a></p>
 	</div>
 	
 	</div>
