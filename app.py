@@ -36,12 +36,12 @@ def connect_db(host, user, password, database):
     return connection
 
 
-conn = connect_db('localhost', 'root', 'LoginPass@@12', 'DogsTinder')
+conn = connect_db('localhost', 'hadaran', '', 'DogsTinder')
 
 
 @app.route('/')
 def index():
-    return render_template('/DogTinder- index.html')
+    return render_template('/index.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
