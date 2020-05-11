@@ -216,6 +216,9 @@ h1 {
 
 img {
     display: block;
+height: 150px;
+width:200px;
+top:50px;
 }
 
 .cardcontainer button.but-nope,

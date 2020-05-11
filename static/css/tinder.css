@@ -1,7 +1,6 @@
 /* Design of a card */
 .card {
   font-size: 14px;
-  line-height: 200px;
   text-align:center;
   width: 150px;
   height: 200px;
@@ -16,23 +15,24 @@
   width: 150px;
 }
 
-#btn{
+.btn{
+	text-decoration:none;
+	color:black;
+
 	border-radius: 12px;
 	padding: 10px 24px;
-	font-size: 12px;
+	font-size: 18px;
 	background-color: #e7e7e7; color: black;
 	margin-right: 4px;
+	transition-duration: 0.4s;
 }
 
-button {
-  transition-duration: 0.4s;
-}
 
-button:hover {
+.btn:hover {
   background-color: #4CAF50; /* Green */
   color: white;
 }
-	
+
 
 /* List functionality */
 .list .cardlist {
@@ -96,6 +96,16 @@ button:hover {
 /*
   Animations, isn't it 'fun' to repeat all of that, just for Safari? :)
 */
+@-webkit-keyframes yay {
+  from {
+    -webkit-transform: rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: rotate(40deg) translateY(-80px);
+    opacity: 0;
+  }
+}
 
 @keyframes yay {
   from {
@@ -108,13 +118,13 @@ button:hover {
   }
 }
 
-@-webkit-keyframes yay {
+@-webkit-keyframes nope {
   from {
     -webkit-transform: rotate(0deg);
     opacity: 1;
   }
   to {
-    -webkit-transform: rotate(40deg) translateY(-80px);
+    -webkit-transform: rotate(-40deg) translateY(-80px);
     opacity: 0;
   }
 }
@@ -126,17 +136,6 @@ button:hover {
   }
   to {
     transform: rotate(-40deg) translateY(-80px);
-    opacity: 0;
-  }
-}
-
-@-webkit-keyframes nope {
-  from {
-    -webkit-transform: rotate(0deg);
-    opacity: 1;
-  }
-  to {
-    -webkit-transform: rotate(-40deg) translateY(-80px);
     opacity: 0;
   }
 }

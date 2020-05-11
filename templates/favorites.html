@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>DogTinder- favorites</title>
+		
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../static/css/help.css">
+
+		<script defer src="../static/js/help.js"></script>
+
+		</head>
+
+		<style>
+
+		</style>
+		
+	</head>
+	<body>
+	
+	<header>
+	<a href="homepage.html">
+	<div id="left">
+		<img id="logoPass" src="../static/images/logo_pasim.png" alt="logo" height="50" width="60">
+		<p id="big"> <b>DogTinder</b></p>
+		<p id="small"> <b>Swipe.Match.Adopt</b></p>
+	</div> </a>
+	<form method="post">
+		<a id="right" href="homepage.html">חזור לדף הבית</a>
+		<button id="right" type="submit" name="clear" value="yes">  נקה בחירות</button><br>
+	</form>
+
+	</header>
+	
+	
+      <ul>
+         {% for dog in dogs %}
+         <li class="card">
+			<p> name: {{ dog[1] }} </p>
+              <a href="/dogProfile/{{ dog[0] }}" class="btn" style="color:black; text-decoration:none; font-size:18px; font-weigh:bold">צפייה בפרופיל</a>
+                  </div>
+
+                  <div class="dog-image"><img src="{{ dog[8] }}" alt="">
+
+                  </div>
+              </li>
+                {% endfor %}
+
+      </ul>
+
+
+
+	</body>
+</html>

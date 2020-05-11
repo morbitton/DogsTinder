@@ -1,112 +1,119 @@
 <!DOCTYPE html>
-<html dir="rtl" >
+<html dir="rtl">
 <head>
-  <meta charset="utf-8" dir="rtl">
-  <title>DogTinder</title>
-  <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/tinder.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/homepage.css') }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <meta charset="utf-8" dir="rtl">
+    <title>DogTinder</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/tinder.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/homepage.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
- <div class="topnav" id="myTopnav">
+<div class="topnav" id="myTopnav">
 
-   <a  href="homepage.html"> <img id="logo" src="{{ url_for('static', filename='images/logohebrew.png') }}"></a>
-  <a  href="{{url_for('DogTinder- index') }}" class="active">התנתק</a>
-  <a href="#">צ'אט</a>
-  <a href="{{url_for('create_dog_profile') }}">הוספת כלב</a>
-  <a href="{{url_for('help') }}">עזרה</a>
-   <a href="{{url_for('updateUser') }}">עריכת פרופיל</a>
-    <a href="#"> <i class="fa fa-user" style= "margin-left:10px;"></i>שם משתמש</a>
-  
-  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-    <i class="fa fa-bars"></i>
-  </a>
+    <a href="homepage.html"> <img id="logo" src="{{ url_for('static', filename='images/logohebrew.png') }}"></a>
+    <a href="{{url_for('index') }}" class="active">התנתק</a>
+    <a href="{{url_for('favorites') }}">מועדפים</a>
+    <a href="{{url_for('create_dog_profile') }}">הוספת כלב</a>
+    <a href="{{url_for('help') }}">עזרה</a>
+    <a href="{{url_for('updateUser') }}">עריכת פרופיל</a>
+    <a href="#"> <i class="fa fa-user" style="margin-left:10px;"></i>שם משתמש</a>
+
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+        <i class="fa fa-bars"></i>
+    </a>
 
 
 </div>
 
-  <form style="text-align:center" class="example" action="action_page.php">
-  <input type="text" placeholder="Search.." name="search">
-  <button type="submit"><i class="fa fa-search"></i></button>
+<form style="text-align:center" class="example" method="POST">
+    <label><b> בחר מין:</b> </label>
+    <select dir="rtl" name="gender">
+        <option></option>
+        <option value="זכר">Male</option>
+        <option value="נקבה">Female</option>
+    </select>
+    <label><b> בחר אזור איסוף:</b> </label>
+    <select dir="rtl" name="area">
+        <option></option>
+        <option value="North">North</option>
+        <option value="Center">Center</option>
+        <option value="South">South</option>
+    </select>
+    <button type="submit" class="btn" name="filter" value="submit" style="background-color:blue"><i
+            class="fa fa-search"></i></button>
 </form>
-
-
-
-
 <br><br>
+<div class="container">
+    <div style=" text-align:center;">
 
-<div class="container"> 
- <div style=" text-align:center;"> ג'וניור, בן 3 חודשים ,לוד
- <button type="button" id="btn">צפייה בפרופיל</button>
+        <br>
+        <br>
 
+        <div class="cardcontainer list">
+            <ul class="cardlist">
+                {% for dog in dogs %}
+                <li class="card" data-dog_id="{{ dog[0] }}">
+                    <div class="dog-details">
+                        <h2>{{ dog[1] }}, נולד ב- {{ dog[2] }}, {{ dog[4] }}</h2>
+                        <a href="/dogProfile/{{ dog[0] }}" class="btn"
+                           style="color:black; text-decoration:none; font-size:18px; font-weigh:bold">צפייה בפרופיל</a>
+                    </div>
+
+                    <div class="dog-image"><img src="{{ url_for('static', filename=dog[9]) }}" alt="">
+                    </div>
+                </li>
+                {% endfor %}
+
+                <li class="card">
+                    <p style="color:blue; font-size:25px; margin-top:40%;">No more dogs at the moment </p>
+                </li>
+            </ul>
+            <button value="yes" class="but-yay">✔</button>
+            <button value="no" class="but-nope">X</button>
+
+        </div>
+    </div>
 </div>
-</div>
+
+<br>
 <br>
 
-  <section>
-    <div class="cardcontainer list">
-      <ul class="cardlist">
-        <li class="card current"><img src="../images/a-push-please.jpg" alt=""></li>
-        <li class="card"><img src="../images/amazing-dog.jpg" alt=""></li>
-        <li class="card"><img src="../images/awesome-mix-dog.jpg" alt=""></li>
-        <li class="card"><img src="../images/baby-amardillo.jpg" alt=""></li>
-        <li class="card"><img src="../images/baby-hippo-nom.jpg" alt=""></li>
-        <template>
-          <li class="card"><img src="../images/baby-rhino.jpg" alt=""></li>
-          <li class="card"><img src="../images/barbie-frenchie.jpg" alt=""></li>
-          <li class="card"><img src="../images/basset-helmet.jpg" alt=""></li>
-          <li class="card"><img src="../images/bear-dog.jpg" alt=""></li>
-          <li class="card"><img src="../images/bear-puppy-fluff.jpg" alt=""></li>
-          <li class="card"><img src="../images/best-day-ever-puppy.jpg" alt=""></li>
-          <li class="card"><img src="../images/bleh-puppy.jpg" alt=""></li>
-          <li class="card"><img src="../images/bleh-tapir.jpg" alt=""></li>
-          <li class="card"><img src="../images/cat-on-stairs.jpg" alt=""></li>
-          <li class="card"><img src="../images/chocolate-puppy.jpg" alt=""></li>
-          <li class="card"><img src="../images/corgisquee.jpg" alt=""></li>
-          <li class="card"><img src="../images/corns-and-penny.jpg" alt=""></li>
-          <li class="card"><img src="../images/crazy-otter.jpg" alt=""></li>
-          <li class="card"><img src="../images/cute-brown-puppy.jpg" alt=""></li>
-          <li class="card"><img src="../images/dalmatian.jpg" alt=""></li>
-          <li class="card"><img src="../images/derpy-hedgehog.jpg" alt=""></li>
-        </template>
-      </ul>
-	     <button class="but-yay">✔</button>
-      <button class="but-nope">X</button>
-
-   
+<footer>
+    <div class="footer">
+        <p><b>App by MTA students<br>
+            Hadar Anuar & Mor Biton & Amit Ifrah<br>
+            DogsTinder©<b></p>
     </div>
-    <ul class="cardlist" id="results">
-    </ul>
-  </section>
-  
-  
-  
-  <br>
-  <br>
-  
-  <footer> 
-<div class="footer">
-<p><b>App by MTA students<br>
-					Hadar Anuar & Mor Biton & Amit Ifrah<br>
-					DogsTinder©<b> </p> 
-</div>	
 </footer>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="{{ url_for('static',filename='js/tinder.js') }}"></script>
+<!--<script src="{{ url_for('static',filename='js/homaPage.js') }}"></script>-->
+
 <script>
-function myFunction() {
-  var x = document.getElementById("myTopnav");
-  if (x.className === "topnav") {
-    x.className += " responsive";
-  } else {
-    x.className = "topnav";
-  }
-}
+    $('ul.cardlist li:first-child').addClass('current');
+ function myFunction() {
+ $('#myTopnav').addClass('responsive');
+ }
+
+ $('.cardcontainer > button').click(function(){
+var dog_id = $('ul.cardlist li:first-child').data('dog_id');
+var answer = $(this).val();
+$.ajax({
+     type: 'POST',
+     url: "/favorites/add",
+     data: {
+        dog_id : dog_id,
+        answer: answer
+     },
+     success: function(data) {
+     },
+  });
+});
+
 </script>
 
-<script src="../js/tinder.js"></script>
-<script src="../js/cuter.js"></script>
 </body>
 </html>
 
