@@ -1,3 +1,4 @@
+pymysql
 Flask
 mysql-connector-python
 passlib

@@ -7,7 +7,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		
-		<link rel="stylesheet" type="text/css" href="../css/create_dog_profile.css">
+		<link rel="stylesheet" type="text/css" href="../static/css/create_dog_profile.css">
 
 		<style>
 
@@ -19,7 +19,7 @@
 	<header>
 	<a href="homepage.html">
 		<div id="left">
-			<img id="logoPass" src="../images/לוגו פסים.png" alt="logo" height="50" width="60">
+			<img id="logoPass" src="../static/images/logo_pasim.png" alt="logo" height="50" width="60">
 			<p id="big"> <b>DogTinder</b></p>
 			<p id="small"> <b>Swipe.Match.Adopt</b></p>
 		</div> </a>
@@ -29,7 +29,7 @@
 
 	<main>
 	
-	<form id="form3" method="POST" action="" >
+	<form id="form3" method="POST" action="" enctype="multipart/form-data" >
 
 		<fieldset id="f1">
 		
@@ -46,19 +46,26 @@
 		</div>
 		
 		<div>
-		<input class="cls" dir="rtl" type="date" name="brith_date" required>
+		<input class="cls" dir="rtl" type="date" name="birth_date" required>
 		<label class="lb1"> :תאריך לידה* </label>
 		</div>
 		
 		<div>
-		  <select dir="rtl" class="cls" name=":מין*" >
-					<option></option>
-				  <option>זכר</option>
-				  <option>נקבה</option>
+		  <select dir="rtl" class="cls" name="gender" required>
+				  <option>Male</option>
+				  <option>Female</option>
 			</select>
 			<label class="lb1"> :מין* </label>
 		</div>
-		
+
+		<div>
+			<select dir="rtl" class="cls" name="area" required>
+				  <option>North</option>
+				<option>Center</option>
+				  <option>South</option>
+			</select>
+			<label class="lb1"> :אזור איסוף*  </label>
+		</div>
 		
 		<div>
 		<input class="cls" dir="rtl" type="text" name="city" required>
@@ -67,7 +74,7 @@
 		
 		<div>
 		<input class="cls" dir="rtl" type="text" name="type" required>
-		<label class="lb1"> :סוג/ גזע  </label>
+		<label class="lb1">  :סוג/ גזע* </label>
 		</div>
 		
 		
