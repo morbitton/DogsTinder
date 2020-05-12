@@ -11,7 +11,7 @@
 <body>
 <div class="topnav" id="myTopnav">
 
-    <a href="homepage.html"> <img id="logo" src="{{ url_for('static', filename='images/logohebrew.png') }}"></a>
+    <a href="{{url_for('homepage') }}"></a>> <img id="logo" src="{{ url_for('static', filename='images/logohebrew.png') }}"></a>
     <a href="{{url_for('index') }}" class="active">התנתק</a>
     <a href="{{url_for('favorites') }}">מועדפים</a>
     <a href="{{url_for('create_dog_profile') }}">הוספת כלב</a>
@@ -57,7 +57,7 @@
                     <div class="dog-details">
                         <h2>{{ dog[1] }}, נולד ב- {{ dog[2] }}, {{ dog[4] }}</h2>
                         <a href="/dogProfile/{{ dog[0] }}" class="btn"
-                           style="color:black; text-decoration:none; font-size:18px; font-weigh:bold">צפייה בפרופיל</a>
+                           style="color:black; text-decoration:none; font-size:18px; font-weight:bold">צפייה בפרופיל</a>
                     </div>
 
                     <div class="dog-image"><img src="{{ url_for('static', filename=dog[9]) }}" alt="">

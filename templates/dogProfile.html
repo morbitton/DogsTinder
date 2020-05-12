@@ -6,7 +6,7 @@
         <meta charset="utf-8" dir="rtl">
         <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<link rel="stylesheet" type="text/css" href="../static/css/dogProfile.css">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/dogProfile.css') }}">
 <link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.2.1/css/bootstrap.min.css" integrity="sha384-vus3nQHTD+5mpDiZ4rkEPlnkcyTP+49BhJ4wJeJunw06ZAp+wzzeBPUXr42fi8If" crossorigin="anonymous">
 
 
@@ -17,12 +17,12 @@
 
 		<div class="topnav" id="myTopnav">
 
-   <a  href="homepage.html"> <img id="logo" src="../static/images/logohebrew.png"></a>
-  <a  href="index.html" class="active">התנתק</a>
-  <a href="#">מועדפים</a>
-  <a href="create_dog_profile.html">הוספת כלב</a>
-  <a href="help.html">עזרה</a>
-   <a href="updateUser.html">עריכת פרופיל</a>
+   <a  href="{{url_for('homepage') }}"> <img id="logo" src="{{ url_for('static', filename='images/logohebrew.png') }}"></a>
+  <a  href="{{url_for('index') }}" class="active">התנתק</a>
+  <a href="{{url_for('favorites') }}">מועדפים</a>
+  <a href="{{url_for('create_dog_profile') }}">הוספת כלב</a>
+  <a href="{{url_for('help') }}">עזרה</a>
+   <a href="{{url_for('updateUser') }}">עריכת פרופיל</a>
     <a href="#"> <i class="fa fa-user" style= "margin-left:10px;"></i>שם משתמש</a>
   
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
@@ -44,7 +44,7 @@
                 <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
                 <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
               </ol>
-              <div class="carousel-inner" style= "height=350px;"  >
+              <div class="carousel-inner" style= "height:350px;"  >
                 <div class="carousel-item active"  >
                   <img  id="gallery"  class="d-block w-100" src="../static/images/dog.jpg" class="img-thumbnail" alt="First slide">
                 </div>

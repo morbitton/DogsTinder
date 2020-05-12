@@ -7,7 +7,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		
-		<link rel="stylesheet" type="text/css" href="../static/css/create_dog_profile.css">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/create_dog_profile.css') }}">
 
 		<style>
 
@@ -17,14 +17,14 @@
 	
 	<body>
 	<header>
-	<a href="homepage.html">
+	<a href="{{url_for('homepage') }}">
 		<div id="left">
-			<img id="logoPass" src="../static/images/logo_pasim.png" alt="logo" height="50" width="60">
+			<img id="logoPass" src="{{ url_for('static', filename='images/logo_pasim.png') }}" alt="logo" height="50" width="60">
 			<p id="big"> <b>DogTinder</b></p>
 			<p id="small"> <b>Swipe.Match.Adopt</b></p>
 		</div> </a>
 	
-		<button id="right" type="button"><a  href="homepage.html">חזור לדף הבית</a></button><br>
+		<button id="right" type="button"><a  href="{{url_for('homepage') }}">חזור לדף הבית</a></button><br>
 	</header>
 
 	<main>
