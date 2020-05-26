@@ -16,50 +16,50 @@ app = Flask(__name__)
 # !--- For debugging switch to true ---!
 app.debug = True
 
-UPLOAD_FOLDER = 'DogsTinder/static/images/'
+UPLOAD_FOLDER = os.path.abspath(os.curdir) + '/static/images/'
+
 
 app = Flask(__name__)
 
+
+app.config['DEBUG'] = True
+app.config["SECRET_KEY"] = "OCML3BRawWEUeaxcuKHLpw"
+toolbar = DebugToolbarExtension(app)
+
 # Connect to the database
-connection = pymysql.connect("localhost", "root", "", "dogstinder")
+connection = pymysql.connect("localhost", "root", "LoginPass@@12", "DogsTinder")
 mycursor = connection.cursor()
 
 
-# app.config["SECRET_KEY"] = "OCML3BRawWEUeaxcuKHLpw"
-# toolbar = DebugToolbarExtension(app)
-
-# mydb = pymysql.connect("localhost", "hadaran", "", "dogstinder")
-# myCursor = mydb.cursor()
-#
-@app.route('/', methods=['POST', 'GET'])
 @app.route("/homepage", methods=['POST', 'GET'])
 def homepage():
-    un = "mor"
-    req = request.form
-    filter = ""
-    if request.method == 'POST':
-        if req.get("filter") == 'submit':
-            ge = req.get("gender")
-            ar = req.get("area")
-            if ge and ar:
-                filter = "gender='" + ge + "' and area ='" + ar + "'"
-            elif ge:
-                filter = "gender='" + ge + "'"
-            elif ar:
-                filter = "area='" + ar + "'"
-    else:
+    un = get_user_logged_in()
+    if un:
+        req = request.form
+        filter = ""
+        if request.method == 'POST':
+            if req.get("filter") == 'submit':
+                ge = req.get("gender")
+                ar = req.get("area")
+                if ge and ar:
+                    filter = "gender='" + ge + "' and area ='" + ar + "'"
+                elif ge:
+                    filter = "gender='" + ge + "'"
+                elif ar:
+                    filter = "area='" + ar + "'"
         queryhomepage = "SELECT * FROM dogs"
 
-    # add query for excluding from likes table
-    queryhomepage += " WHERE dog_id NOT IN (SELECT dog_id FROM likes WHERE username='" + un + "')"
+        # add query for excluding from likes table
+        queryhomepage += " WHERE dog_id NOT IN (SELECT dog_id FROM likes WHERE username='" + un + "')"
 
-    # add query for the filter in homepage
-    if filter != "":
-        queryhomepage += " AND " + filter
+        # add query for the filter in homepage
+        if filter != "":
+            queryhomepage += " AND " + filter
 
-    mycursor.execute(queryhomepage)
-    result = mycursor.fetchall()
-    return render_template('homepage.html', dogs=result)
+        mycursor.execute(queryhomepage)
+        result = mycursor.fetchall()
+        return render_template('homepage.html', dogs=result)
+    return redirect('login')
 
 
 def convertToBinaryData(filename):
@@ -69,102 +69,118 @@ def convertToBinaryData(filename):
     return binaryData
 
 
-# @app.route('/', methods=['POST', 'GET'])
 @app.route('/create_dog_profile/', methods=['POST', 'GET'])
 def create_dog_profile():
-    if request.method == "POST":
-        details = request.form
-        name = details['dog_name']
-        chip = details['chip_number']
-        birth_date = details['birth_date']
-        gender = details['gender']
-        area = details['area']
-        city = details['city']
-        type = details['type']
-        description = details['description']
-        img1 = request.files['files']
-        path1 = os.path.join('images/', img1.filename)
-        img1.save(os.path.join(UPLOAD_FOLDER, img1.filename))
-        photo1 = convertToBinaryData(os.path.join(UPLOAD_FOLDER, img1.filename))
-        img2 = request.files['img2']
-        if img2.filename != '':
-            img2.save(os.path.join(UPLOAD_FOLDER, img2.filename))
-            path2 = os.path.join('images/', img2.filename)
-            photo2 = convertToBinaryData(os.path.join(UPLOAD_FOLDER, img2.filename))
+    username = get_user_logged_in()
+    if username:
+        if request.method == "POST":
+            try:
+                details = request.form
+                name = details['dog_name']
+
+                # check if chip already exists
+                chip = details['chip_number']
+                mycursor.execute("SELECT dog_id FROM dogs WHERE dog_id = '" + chip + "'")
+                chip_from_db = mycursor.fetchall()
+                if (chip_from_db):
+                    raise Exception('Chip already Exists!')
+
+                birth_date = details['birth_date']
+                gender = details['gender']
+                area = details['area']
+                city = details['city']
+                type = details['type']
+                description = details['description']
+                img1 = request.files['files']
+                path1 = os.path.join('images/', img1.filename)
+                img1.save(os.path.join(UPLOAD_FOLDER, img1.filename))
+                photo1 = convertToBinaryData(
+                    os.path.join(UPLOAD_FOLDER, img1.filename))
+                img2 = request.files['img2']
+                if img2.filename != '':
+                    img2.save(os.path.join(UPLOAD_FOLDER, img2.filename))
+                    path2 = os.path.join('images/', img2.filename)
+                    photo2 = convertToBinaryData(
+                        os.path.join(UPLOAD_FOLDER, img2.filename))
+                else:
+                    photo2 = ''
+                    path2 = ''
+                img3 = request.files['img3']
+                if img3.filename != '':
+                    path3 = os.path.join('images/', img3.filename)
+                    img3.save(os.path.join(UPLOAD_FOLDER, img3.filename))
+                    photo3 = convertToBinaryData(
+                        os.path.join(UPLOAD_FOLDER, img3.filename))
+                else:
+                    photo3 = ''
+                    path3 = ''
+
+                mycursor.execute(
+                    "INSERT INTO dogs(dog_id,name,bday,gender,area,city, type,details,pic1,path1,pic2,path2,pic3,path3,username) VALUES (%s, %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                    (chip, name, birth_date, gender, area, city, type, description, photo1, path1, photo2, path2, photo3, path3,
+                    username))
+                connection.commit()
+                message = "Dog added successfully"
+            except Exception as error:
+                message = str(error)
         else:
-            photo2 = ''
-            path2 = ''
-        img3 = request.files['img3']
-        if img3.filename != '':
-            path3 = os.path.join('images/', img3.filename)
-            img3.save(os.path.join(app.config['UPLOAD_FOLDER'], img3.filename))
-            photo3 = convertToBinaryData(os.path.join(app.config['UPLOAD_FOLDER'], img3.filename))
-        else:
-            photo3 = ''
-            path3 = ''
+            message = " "
 
-        username = "mor"
-
-        mycursor.execute(
-            "INSERT INTO dogs(dog_id,name,b_date,gender,area,city, type,details,pic1,path1,pic2,path2,pic3,path3,username) VALUES (%s, %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            (chip, name, birth_date, gender, area, city, type, description, photo1, path1, photo2, path2, photo3, path3,
-             username))
-        connection.commit()
-        # mycursor.close()
-    return render_template('create_dog_profile.html')
-
-    return render_template('create_dog_profile.html')
+        return render_template('create_dog_profile.html', message=message)
+    return redirect('/login')
 
 
 @app.route("/dogProfile/<dog_id>")
 def dogProfile(dog_id):
-    queryDogProfile = "select * from dogs where dog_id=" + dog_id
-    mycursor.execute(queryDogProfile)
-    result = mycursor.fetchall()
-    return render_template('dogProfile.html', dog=result)
+    uname = get_user_logged_in()
+    if uname:
+        queryDogProfile = "select * from dogs where dog_id=" + dog_id
+        mycursor.execute(queryDogProfile)
+        result = mycursor.fetchall()
+        return render_template('dogProfile.html', dog=result)
+    return redirect('login')
 
 
 @app.route("/favorites/add", methods=['POST'])
 def yes_button():
-    # if (is_user_logged_in()): # the function will check session of username
-    username = "mor"
-    details = request.form
+    username = get_user_logged_in()
+    if username:
+        details = request.form
+        dog_id = details['dog_id']
+        answer = details['answer']
+        if answer == 'yes' or answer == 'no':
+            mycursor.execute(
+                "INSERT INTO likes VALUES (%s, %s,%s)",
+                (username, dog_id, answer))
 
-    dog_id = details['dog_id']
-    answer = details['answer']
-    if answer == 'yes' or answer == 'no':
-        mycursor.execute(
-            "INSERT INTO likes VALUES (%s, %s,%s)",
-            (username, dog_id, answer))
-
-    connection.commit()
-
-    return 'success'
+        connection.commit()
+        return 'success'
     return 'fail'
 
 
-@app.route("/favorites/" ,methods=['POST','GET'])
+@app.route("/favorites/", methods=['POST', 'GET'])
 def favorites():
-    username = "mor"
-    if request.method == 'POST':
-        details = request.form
-        clear_but = details['clear']
-        if clear_but == 'yes':
-            clearChoices()
-    query_favorites = "select * from dogs left join likes on likes.dog_id = dogs.dog_id where user_name='" + username + "' AND answer='yes'"
-    mycursor.execute(query_favorites)
-    dogs = mycursor.fetchall()
-    connection.commit()
-    # mycursor.close()
-    return render_template('favorites.html', dogs=dogs)
+    username = get_user_logged_in()
+    if username:
+        if request.method == 'POST':
+            details = request.form
+            clear_but = details['clear']
+            if clear_but == 'yes':
+                clearChoices(username)
+                return redirect('/homepage')
+        query_favorites = "select * from dogs left join likes on likes.dog_id = dogs.dog_id where likes.username='" + \
+            username + "' AND answer='yes'"
+        mycursor.execute(query_favorites)
+        dogs = mycursor.fetchall()
+        connection.commit()
+        return render_template('favorites.html', dogs=dogs)
+    return redirect('/login')
 
 
-def clearChoices():
-    um = "mor"
-    queryClear = "DELETE FROM likes WHERE user_name='" + um + "'"
+def clearChoices(username):
+    queryClear = "DELETE FROM likes WHERE username='" + username + "'"
     mycursor.execute(queryClear)
     connection.commit()
-    return redirect(url_for('/homepage/'))
 
 
 def definedlog(fileHandler):
@@ -185,120 +201,198 @@ def definedlog(fileHandler):
 #     return connection
 
 
-# conn = connect_db('localhost', 'hadaran', '', 'DogsTinder')
+# conn = connect_db('localhost', '', '', 'DogsTinder')
 
 
-@app.route('/index')
+@app.route('/')
 def index():
     return render_template('/index.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    mycursor = connection.cursor()
+    message = ""
     if request.method == 'POST':
-        userDetails = request.form
-        username = userDetails['username']
-        password = sha256_crypt.encrypt(userDetails["password"])
-        firstName = userDetails['firstName']
-        lastName = userDetails['lastName']
-        phone = userDetails['phone']
-        email = userDetails['email']
-        mycursor = connection.cursor()
-        sql = "INSERT INTO users (username, password, firstName, lastName, phone, email) VALUES (%s, %s, %s, %s, %s, %s)"
-        val = (username, password, firstName, lastName, phone, email)
-        mycursor.execute(sql, val)
-        connection.commit()
-        if authenticate_user(username, password):
-            session["USERNAME"] = username
-            session["PASSWORD"] = password
-        return redirect(url_for('homepage'))
-    return render_template('/register.html')
+        try:
+            userDetails = request.form
+            username = userDetails['username']
+            unQuery = "SELECT username FROM users WHERE username = '" + username + "'"
+            mycursor.execute(unQuery)
+            username_from_db = mycursor.fetchall()
+            if username_from_db:
+                raise Exception('User name already Exists!')
+            password = userDetails["password1"]
+            password_confirm = userDetails["password2"]
+            if password != password_confirm:
+                raise Exception('Passwords does not match!')
+            password = sha256_crypt.encrypt(userDetails["password1"])
+            firstName = userDetails['firstName']
+            lastName = userDetails['lastName']
+            phone = userDetails['phone']
+            email = userDetails['email']
+            mycursor = connection.cursor()
+            sql = "INSERT INTO users (username, password, firstName, lastName, phone, email) VALUES (%s, %s, %s, %s, %s, %s)"
+            val = (username, password, firstName, lastName, phone, email)
+            mycursor.execute(sql, val)
+            connection.commit()
+            session['USERNAME'] = username
+            return redirect(url_for('homepage'))
+        except Exception as error:
+            message = str(error)
 
-
-# @app.route('/')
-# def home():
-#     return render_template('/home.html')
+    return render_template('/register.html', message=message)
 
 
 @app.route('/help')
 def help():
-    return render_template('/help.html')
-
-
-def check_username(username, pas):
-    maulers = connection.cursor()
-    Fender = "SELECT * FROM users"
-    maulers.execute(Fender)
-    result = maulers.fetchall()
-    for user in result:
-        print(user)
-        if user[0] == username:
-            if sha256_crypt.verify(pas, user[1]):
-                return True
-    return False
+    uname = get_user_logged_in()
+    if uname:
+        return render_template('/help.html')
+    return redirect('login')
 
 
 def authenticate_user(username, password):
-    if check_username(username, password):
-        return True
+    maulers = connection.cursor()
+    Fender = "SELECT username, password FROM users WHERE username = '" + username + "'"
+    maulers.execute(Fender)
+    result = maulers.fetchall()
+    print(result)
+    for user in result:
+        if sha256_crypt.verify(password, user[1]):
+            session["USERNAME"] = user[0]
+            return True
+        else:
+            raise Exception("Password doesn't match")
+    raise Exception("Username not found")
+
+
+def get_user_logged_in():
+    if "USERNAME" in session:
+        return session["USERNAME"]
     return False
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    message = ""
+    if get_user_logged_in():
+        return redirect('homepage')
+
     if request.method == "POST":
         req = request.form
         username = req.get("username")
         password = req.get("password")
-        if authenticate_user(username, password):
-            session["USERNAME"] = username
-            session["PASSWORD"] = password
+        try:
+            authenticate_user(username, password)
             return redirect(url_for('homepage'))
-        else:
-            return redirect(url_for('login'))
-        return render_template('homepage.html',
-                               username=session["USERNAME"])
-    return render_template('/register.html')
+        except Exception as error:
+            message = str(error)
+    return render_template('/login.html', message=message)
 
 
-# לעדכון פרופיל משתמש
-# @app.route("/")
-@app.route('/updateUser', methods=['GET', 'POST'])
+@app.route('/updateUser', methods=['POST', 'GET'])
 def updateUser():
+    uname = get_user_logged_in()
+    if uname:
+        mycursor.execute(
+            "SELECT * FROM users WHERE username = '" + uname + "'")
+        user = mycursor.fetchall()
+        if request.method == 'POST':
+            formDetails = request.form
+            name = formDetails['name']
+            if name != "":
+                sql = "UPDATE users SET first_name = '" + \
+                    name + "'  WHERE username = '" + uname + "'"
+                mycursor.execute(sql)
+                connection.commit()
+
+            lastname = formDetails['lastname']
+            if lastname != "":
+                sql = "UPDATE users SET last_name = '" + \
+                    lastname + "'  WHERE username = '" + uname + "'"
+                mycursor.execute(sql)
+                connection.commit()
+
+            phone = formDetails["tel"]
+            if phone != "":
+                sql = "UPDATE users SET phone = '" + phone + \
+                    "'  WHERE username = '" + uname + "'"
+                mycursor.execute(sql)
+                connection.commit()
+
+            mail = formDetails['mail']
+            if mail != "":
+                sql = "UPDATE users SET email = '" + mail + \
+                    "'  WHERE username = '" + uname + "'"
+                mycursor.execute(sql)
+                connection.commit()
+
+            newpass = formDetails["newpass"]
+            renewpass = formDetails["confirm"]
+
+            if (newpass != "") & (renewpass != ""):
+                if newpass == renewpass:
+                    newpass = sha256_crypt.encrypt(newpass)
+                    renewpass = sha256_crypt.encrypt(renewpass)
+                    sql = "UPDATE users SET password='" + newpass + "', repassword='" + \
+                        renewpass + "' where username='" + uname + "'"
+                    mycursor.execute(sql)
+                    connection.commit()
+
+            message = "your details were updates successfully"
+            mycursor.execute(
+                "SELECT * FROM users WHERE username = '" + uname + "'")
+            user = mycursor.fetchall()
+        else:
+            message = ""
+
+        return render_template("updateUser.html", dogs=showDogs(), user=user, m=message)
+    return redirect('login')
+
+
+def showDogs():
+    un = session["USERNAME"]
+    queryShowDogs = "select dog_id,name from dogs where username='" + un + "'"
+    mycursor.execute(queryShowDogs)
+    result = mycursor.fetchall()
+    return result
+
+
+@app.route("/updateUser/<dog_id>", methods=['POST', 'GET'])
+def updateDog(dog_id):
     if request.method == 'POST':
         formDetails = request.form
-        uname = formDetails['username']
-        name = formDetails['name']
-        lastname = formDetails['lastname']
-        tel = formDetails['tel']
-        mail = formDetails['mail']
-        oldpass = sha256_crypt.encrypt(formDetails["oldpass"])
-        newpass = sha256_crypt.encrypt(formDetails["newpass"])
-        renewpass = sha256_crypt.encrypt(formDetails["renewpass"])
-        queryUpdateUser = "UPDATE users SET username=uname, password=newpass, phone=tel where username=uname"
-        mycursor.execute(queryUpdateUser)
-        connection.commit()
-        return True;
-    return True;
+        if 'delete' in formDetails:
+            deleteDog(dog_id)
+        elif 'adopt' in formDetails:
+            adopted(dog_id)
+    return redirect('/updateUser')
 
 
-#
-#   if authenticate_user(username, password):
-#       session["USERNAME"] = username
-#       session["PASSWORD"] = password
-#   return redirect(url_for('homepage'))
-# return render_template('/register.html')
+def deleteDog(dog_id):
+    queryDeleteDog = "DELETE FROM dogs WHERE dog_id =" + dog_id
+    mycursor.execute(queryDeleteDog)
+    connection.commit()
+    return True
 
 
-@app.route('/log_out')
-def log_out():
+def adopted(dog_id):
+    mycursor.execute(
+        "INSERT INTO adopted SELECT d.* FROM dogs AS d WHERE dog_id = " + dog_id)
+    connection.commit()
+    deleteDog(dog_id)
+    return True
+
+
+@app.route('/logout')
+def logout():
     session.clear()
-    return render_template('homepage.html')
+    return redirect('/')
 
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0')
+if __name__ == '__main__':
+     app.run(host='0.0.0.0', port=80, debug=True)
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+mycursor.close()
