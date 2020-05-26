@@ -1,3 +1,9 @@
+
+	.topnav a:hover {
+
+  color: black;
+}
+
 body {
     font-family: helvetica, arial, sans-serif;
     color: black;
@@ -64,7 +70,7 @@ margin-right: 200px;
 /* Add an active class to highlight the current page */
 .topnav a.active {
   background-color: none;
-  color: white;
+  color: black;
 }
 
 /* Hide the link that should open and close the topnav on small screens */
@@ -366,4 +372,6 @@ form.example::after {
   clear: both;
   display: table;
 }
+
+
 

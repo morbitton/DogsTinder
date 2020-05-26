@@ -3,46 +3,44 @@
 			margin:0px;
 		}
 
+		a{text-decoration:none; }
 
+        ul{width:100%;}
+        .ul-dogs {max-width:768px; margin: auto; padding:0 !important}
+		#clearChoices{size-font:25px; cursor:pointer; margin:auto; display:block; padding:1.2%; width:10%;
+		            border-radius:15%; border:2px solid black; background-color:LightGray;}
+		#clearChoices:hover{font-weight:bold; box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);}
 
-		a{text-decoration:none;}
+		li{font-style:italic; font-size:18px; margin:auto; list-style-type:none; background:#cce5ff; display:block;}
+        a.goToProfile{color:black; text-decoration:none; font-weigh:bold cursor:pointer; margin:auto; display:block;}
+        a.goToProfile:hover{font-weight:bold;}
 
-		
-			main{margin:auto; text-align:center;}
-			.answer{ width:35%; display:inline-block; margin:auto;font-size:20px; background-color:white;color:green;margin-top:1%; display:none;}
-			.question{margin-top:-3%; cursor: pointer; display:inline-block;  font-size:25px; font-weight:bold; background-color:lightblue; border-radius:40%;}
-			#mail{text-decoration:none;}
+        #oneDog{display:block;  margin:auto; width:70%; }
+
+		@media screen and (max-width: 1500px) {
+               #clearChoices{width:20%;}
+               li{width:100%;}
+		}
 
 		@media screen and (max-width: 1200px) {
-			.answer{width:40%;}
+               #clearChoices{width:15%;}
+               li{width:60%;}
 		}
-		
-		@media screen and (max-width: 1000px) {
 
-			.answer{width:50%;}
-			.question{margin-top:-2%;}
-			#q1{margin-top:2%;}
-		}	
-		
 		@media screen and (max-width:800px) {
-			.answer{width:60%;}
-			header{margin-bottom:12%; }
+            #clearChoices{width:20%;}
+            li{width:90%;}
 		}
-		
+
 		@media screen and (max-width: 650px) {
-
-			.question{margin-top:0%;}
-			.answer{width:100%;}
-			#q1{margin-top:6%;}
-
+            #clearChoices{width:30%;}
+            li{width:90%;}
 		}
 
 		.topnav a:hover {
 
   color: black;
 }
-
-
 
 
 
@@ -145,6 +143,7 @@ margin-right: 200px;
 }
 
 
+
 header,
 section,
 footer {
@@ -152,10 +151,6 @@ footer {
     padding: 0.5em 1em;
 }
 
-
-a {
-    color: lime;
-}
 
 h1 {
     color: #f8f8f8;
@@ -165,5 +160,3 @@ h1 {
 }
 
 
-		
-		

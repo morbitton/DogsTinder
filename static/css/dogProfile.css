@@ -4,7 +4,6 @@ body{
 	background-repeat: no-repeat;
 	font-family: arial;
 
-   
    background-position: center center; /* or 50% 50% */
     background-attachment: fixed;
    margin:0;
@@ -31,7 +30,7 @@ color:blue;
 	height:400px;
 }
 
-.topnav {
+.menu {
   background-color: #F8F8FF;
   overflow: hidden;
 
@@ -59,7 +58,7 @@ margin-right: 200px;
 
 
 /* Style the links inside the navigation bar */
-.topnav a {
+.menu a {
   float: left;
   display: block;
   color: black;
@@ -70,26 +69,26 @@ margin-right: 200px;
 }
 
 /* Change the color of links on hover */
-.topnav a:hover {
+.menu a:hover {
   background-color: lavender;
   color: black;
 }
 
 /* Add an active class to highlight the current page */
-.topnav a.active {
+.menu a.active {
   background-color: none;
-  color: white;
+  color: black;
 }
 
 /* Hide the link that should open and close the topnav on small screens */
-.topnav .icon {
+.menu .icon {
   display: none;
 }
 
 
 @media screen and (max-width: 1100px) {
-  .topnav a:not(:first-child) {display: none;}
-  .topnav a.icon {
+  .menu a:not(:first-child) {display: none;}
+  .menu a.icon {
     float: right;
     display: block;
   }
@@ -97,13 +96,13 @@ margin-right: 200px;
 
 /* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
 @media screen and (max-width: 1100px) {
-  .topnav.responsive {position: relative;}
-  .topnav.responsive a.icon {
+  .menu.responsive {position: relative;}
+  .menu.responsive a.icon {
     position: absolute;
     right: 0;
     top: 0;
   }
-  .topnav.responsive a {
+  .menu.responsive a {
     float: none;
     display: block;
     text-align: right;
