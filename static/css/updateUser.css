@@ -49,7 +49,7 @@ margin-right: 200px;
 
 .topnav a.active {
   background-color: none;
-  color: white;
+  color: black;
 }
 
 
@@ -84,7 +84,7 @@ margin-right: 200px;
 body{
 background-image: url("../images/dog.jpg");
    background-size: cover;
-   background-position: center center; /* or 50% 50% */
+   background-position: center center;
    background-repeat: no-repeat;
     background-attachment: fixed;
    margin:0;

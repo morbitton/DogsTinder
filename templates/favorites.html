@@ -1,58 +1,60 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<title>DogTinder- favorites</title>
-		
-		<!-- Required meta tags -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-		
-		<link rel="stylesheet" type="text/css" href="../static/css/help.css">
+<html xmlns="http://www.w3.org/1999/html">
 
-		<script defer src="../static/js/help.js"></script>
+<head>
+    <title>DogTinder- favorites</title>
 
-		</head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		<style>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/favorites.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-		</style>
-		
-	</head>
-	<body>
-	
-	<header>
-	<a href="homepage.html">
-	<div id="left">
-		<img id="logoPass" src="../static/images/logo_pasim.png" alt="logo" height="50" width="60">
-		<p id="big"> <b>DogTinder</b></p>
-		<p id="small"> <b>Swipe.Match.Adopt</b></p>
-	</div> </a>
-	<form method="post">
-		<a id="right" href="homepage.html">חזור לדף הבית</a>
-		<button id="right" type="submit" name="clear" value="yes">  נקה בחירות</button><br>
-	</form>
+</head>
 
-	</header>
-	
-	
-      <ul>
-         {% for dog in dogs %}
-         <li class="card">
-			<p> name: {{ dog[1] }} </p>
-              <a href="/dogProfile/{{ dog[0] }}" class="btn" style="color:black; text-decoration:none; font-size:18px; font-weigh:bold">צפייה בפרופיל</a>
-                  </div>
+<style>
 
-                  <div class="dog-image"><img src="{{ dog[8] }}" alt="">
+</style>
 
-                  </div>
-              </li>
-                {% endfor %}
+</head>
 
-      </ul>
+<body>
+
+    <div dir="rtl" class="topnav" id="myTopnav">
+
+        {% include 'menu.html' %}
+
+    </div>
+
+    <main>
+        <ul class="ul-dogs">
+            {% for dog in dogs %}
+            <li>
+                <div id="oneDog">
+                    name: {{ dog[1] }}
+                    <br>
+                    <a class="btn goToProfile" href="/dogProfile/{{ dog[0] }}">Click here to view the profile</a>
+
+                    <img src="{{ url_for('static', filename=dog[9]) }}" width="100%" height="100%" alt="photo">
+                </div>
+            </li>
+            <br>
+            {% endfor %}
+
+        </ul>
+    </main>
+
+    <br>
+    <form method="post">
+        <button id="clearChoices" type="submit" name="clear" value="yes"> Clear my choices</button>
+    </form>
+    <br>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 
+</body>
 
-	</body>
+
 </html>

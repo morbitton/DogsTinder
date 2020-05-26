@@ -1,119 +1,128 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>TinderDog- create dog profile</title>
-		
-		<!-- Required meta tags -->
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
-		<link rel="stylesheet" type="text/css" href="../static/css/create_dog_profile.css">
 
-		<style>
+<head>
+    <title>TinderDog- create dog profile</title>
 
-		</style>
-		
-	</head>
-	
-	<body>
-	<header>
-	<a href="homepage.html">
-		<div id="left">
-			<img id="logoPass" src="../static/images/logo_pasim.png" alt="logo" height="50" width="60">
-			<p id="big"> <b>DogTinder</b></p>
-			<p id="small"> <b>Swipe.Match.Adopt</b></p>
-		</div> </a>
-	
-		<button id="right" type="button"><a  href="homepage.html">חזור לדף הבית</a></button><br>
-	</header>
+    <!-- Required meta tags -->
+    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/create_dog_profile.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-	<main>
-	
-	<form id="form3" method="POST" action="" enctype="multipart/form-data" >
+</head>
 
-		<fieldset id="f1">
-		
-		<legend> מילוי פרטי הכלב </legend>
-		
-		<div>
-		<input class="cls" dir="rtl" type="text" name="dog_name" autofocus required >
-		<label class="lb1"> :שם הכלב*  </label>
-		</div>
+<body>
+    <div dir=rtl class="menu" id="myTopnav">
 
-		<div>
-		<input class="cls" dir="rtl" type="number" name="chip_number" required>
-		<label class="lb1"> :מספר שבב*  </label>
-		</div>
-		
-		<div>
-		<input class="cls" dir="rtl" type="date" name="birth_date" required>
-		<label class="lb1"> :תאריך לידה* </label>
-		</div>
-		
-		<div>
-		  <select dir="rtl" class="cls" name="gender" required>
-				  <option>Male</option>
-				  <option>Female</option>
-			</select>
-			<label class="lb1"> :מין* </label>
-		</div>
+        {% include 'menu.html' %}
 
-		<div>
-			<select dir="rtl" class="cls" name="area" required>
-				  <option>North</option>
-				<option>Center</option>
-				  <option>South</option>
-			</select>
-			<label class="lb1"> :אזור איסוף*  </label>
-		</div>
-		
-		<div>
-		<input class="cls" dir="rtl" type="text" name="city" required>
-		<label class="lb1"> :עיר לאיסוף*  </label>
-		</div>
-		
-		<div>
-		<input class="cls" dir="rtl" type="text" name="type" required>
-		<label class="lb1">  :סוג/ גזע* </label>
-		</div>
-		
-		
-		<div>
-		<textarea class="cls"  dir="rtl" cols="40" name="description" rows="2" maxlength="500" placeholder="כגון: תחביבים, התנהגות, גודל, צבע, חיבה לאנשים"></textarea>
-		<label class="lb1" id="imgl"> :תיאור </label>
-		</div>
-		
-		<div>
-		<input class="cls" id="file" dir="rtl" type="file" name="files" required ></textarea>
-		<label class="lb1"> :תמונה 1* </label>
-		</div>
-		
-		<div>
-		<input class="cls" id="file" dir="rtl" type="file" name="img2" ></textarea>
-		<label class="lb1"> :תמונה 2 </label>
-		</div>
-		
-				<div>
-		<input class="cls" id="file" dir="rtl" type="file" name="img3" ></textarea>
-		<label class="lb1"> :תמונה 3 </label>
-		</div>
-
-		<br>
-
-		<p id="must"><b>שדה חובה*</b></p>
-		<br>
-
-			<input class="submit_reset" type="reset" value="אפס טופס" >
-			<input class="submit_reset" type="submit" value=" צור פרופיל" >
+    </div>
 
 
-		</fieldset>
-	</form>
+    <main>
+        <form id="form3" method="POST" action="" enctype="multipart/form-data">
+
+            <fieldset id="f1">
+                <h2>{{ message }}</h2>
+
+                <legend> Fill the dog details</legend>
 
 
-	</main>
-		
-		
+                <div>
+                    <label class="lb1"> *Name: </label>
+                    <input class="cls" dir="ltr" type="text" name="dog_name" autofocus required>
+                </div>
 
-	</body>
+                <div>
+                    <label class="lb1"> *Chip number: </label>
+                    <input class="cls" dir="ltr" type="number" name="chip_number" required>
+                </div>
+
+                <div>
+                    <label class="lb1"> *Birth date: </label>
+                    <input class="cls" dir="ltr" type="date" name="birth_date" required>
+                </div>
+
+                <div>
+                    <label class="lb1"> *Gender: </label>
+                    <select dir="ltr" class="cls" name="gender" required>
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="lb1"> *Collection area: </label>
+                    <select dir="ltr" class="cls" name="area" required>
+                        <option>North</option>
+                        <option>Center</option>
+                        <option>South</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="lb1"> *Collection area: </label>
+                    <input class="cls" dir="ltr" type="text" name="city" required>
+                </div>
+
+                <div>
+                    <label class="lb1"> *Type/ Race: </label>
+                    <input class="cls" dir="ltr" type="text" name="type" required>
+                </div>
+
+
+                <div>
+                    <label class="lb1" id="imgl"> Description: </label>
+                    <textarea class="cls" dir="ltr" cols="40" name="description" rows="3" maxlength="500"
+                        placeholder="Such as: hobbies, behavior, size, color, affection for people"></textarea>
+                </div>
+
+                <div>
+                     <label class="lb1"> *picture 1: </label>
+                    <input class="cls" id="file" dir="ltr" type="file" name="files" required>
+                </div>
+
+                <div>
+                    <label class="lb1"> picture 2: </label>
+                    <input class="cls" id="file" dir="ltr" type="file" name="img2">
+                </div>
+
+                <div>
+                    <label class="lb1"> picture 3: </label>
+                    <input class="cls" id="file" dir="ltr" type="file" name="img3">
+                </div>
+
+                <br>
+
+                <p id="must"><b>*Required field</b></p>
+                <br>
+
+                <input class="submit_reset" type="reset" value="Clear fields">
+                <input class="submit_reset" type="submit" value=" Create a profile">
+
+
+            </fieldset>
+        </form>
+
+
+    </main>
+
+    <br>
+    <br>
+
+    <footer>
+        <div class="footer">
+            <p><b>App by MTA students<br>
+                    Hadar Anuar & Mor Biton & Amit Ifrah<br>
+                    DogsTinder©</b></p>
+        </div>
+    </footer>
+
+
+
+
+</body>
+
 </html>

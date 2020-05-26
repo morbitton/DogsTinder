@@ -3,7 +3,8 @@
 			margin:0px;
 		}
 	
-		body{background-image: url('https://www.ynet.co.il/PicServer5/2019/06/12/9303098/93030220990100980654no.jpg'); background-repeat: no-repeat; background-attachment: fixed; background-size: 100% 100%;}
+		body{background-image: url('https://www.ynet.co.il/PicServer5/2019/06/12/9303098/93030220990100980654no.jpg');
+		background-repeat: no-repeat; background-attachment: fixed; background-size: 100% 100%;}
 		
 		#all{ width:60%; margin:auto; margin-top:3%; }
 		#big{text-decoration:bold; color:black; font-size:60px; display:inline-block;}
@@ -18,8 +19,6 @@
 			height: 60;
 			width: 60;			
 		}
-
-
 
 		@media screen and (max-width: 1200px) {
 			#big{font-size:40px; }
