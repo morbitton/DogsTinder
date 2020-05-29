@@ -32,7 +32,7 @@ pip3 install -r /vagrant/requirements.txt
     create table likes(username varchar(25), dog_id int(11), answer varchar(10));
     create table adopted(dog_id VARCHAR(10) NOT NULL, name VARCHAR(25) NOT NULL, bday DATE NOT NULL, gender VARCHAR(9) NOT NULL, area VARCHAR(20) NOT NULL, city VARCHAR(50) NOT NULL,
     type VARCHAR(20) NOT NULL, details TEXT NOT NULL, pic1 BLOB NOT NULL,path1 TEXT NOT NULL, path2 TEXT, path3 TEXT, pic2 BLOB, pic3 BLOB, username VARCHAR(25), primary key(dog_id), foreign key(username) references users(username));
-    INSERT into users(username, password, firstName, lastName, phone, email) VALUES('mor','1234','mor','bitton','050-8371798','morbitton1993@gmail.com');
+    INSERT into users(username, password, firstName, lastName, phone, email) VALUES('morbi','mor311','mor','bitton','050-8371798','morbitton1993@gmail.com');
     DESCRIBE users;
     DESCRIBE dogs;
     DESCRIBE likes;
