@@ -16,19 +16,106 @@ app = Flask(__name__)
 # !--- For debugging switch to true ---!
 app.debug = True
 
-UPLOAD_FOLDER = os.path.abspath(os.curdir) + '/static/images/'
+UPLOAD_FOLDER = os.path.abspath(os.curdir) + 'static/images'
 
-
-app = Flask(__name__)
-
-
-app.config['DEBUG'] = True
 app.config["SECRET_KEY"] = "OCML3BRawWEUeaxcuKHLpw"
-toolbar = DebugToolbarExtension(app)
+#toolbar = DebugToolbarExtension(app)
+
+
+def definedlog(fileHandler):
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.ERROR)
+    handler = logging.FileHandler(fileHandler)
+    handler.setLevel(logging.ERROR)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s : %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger
+
 
 # Connect to the database
 connection = pymysql.connect("localhost", "root", "LoginPass@@12", "DogsTinder")
 mycursor = connection.cursor()
+
+
+@app.route('/')
+def index():
+    return render_template('/index.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    mycursor = connection.cursor()
+    message = ""
+    if request.method == 'POST':
+        try:
+            userDetails = request.form
+            username = userDetails['username']
+            unQuery = "SELECT username FROM users WHERE username = '" + username + "'"
+            mycursor.execute(unQuery)
+            username_from_db = mycursor.fetchall()
+            if username_from_db:
+                raise Exception('User name already Exists!')
+            password = userDetails["password1"]
+            password_confirm = userDetails["password2"]
+            if password != password_confirm:
+                raise Exception('Passwords does not match!')
+            password = sha256_crypt.encrypt(userDetails["password1"])
+            firstName = userDetails['firstName']
+            lastName = userDetails['lastName']
+            phone = userDetails['phone']
+            email = userDetails['email']
+            mycursor = connection.cursor()
+            sql = "INSERT INTO users (username, password, firstName, lastName, phone, email) VALUES (%s, %s, %s, %s, %s, %s)"
+            val = (username, password, firstName, lastName, phone, email)
+            mycursor.execute(sql, val)
+            connection.commit()
+            session['USERNAME'] = username
+            return redirect(url_for('homepage'))
+        except Exception as error:
+            message = str(error)
+
+    return render_template('/register.html', message=message)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    message = ""
+    if get_user_logged_in():
+        return redirect('homepage')
+
+    if request.method == "POST":
+        req = request.form
+        username = req.get("username")
+        password = req.get("password")
+        try:
+            authenticate_user(username, password)
+            return redirect(url_for('homepage'))
+        except Exception as error:
+            message = str(error)
+    return render_template('/login.html', message=message)
+
+
+def authenticate_user(username, password):
+    maulers = connection.cursor()
+    Fender = "SELECT username, password FROM users WHERE username = '" + username + "'"
+    maulers.execute(Fender)
+    result = maulers.fetchall()
+    print(result)
+    for user in result:
+        if sha256_crypt.verify(password, user[1]):
+            session["USERNAME"] = user[0]
+            return True
+        else:
+            raise Exception("Password doesn't match")
+    raise Exception("Username not found")
+
+
+def get_user_logged_in():
+    if "USERNAME" in session:
+        return session["USERNAME"]
+    return False
 
 
 @app.route("/homepage", methods=['POST', 'GET'])
@@ -183,65 +270,10 @@ def clearChoices(username):
     connection.commit()
 
 
-def definedlog(fileHandler):
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.ERROR)
-    handler = logging.FileHandler(fileHandler)
-    handler.setLevel(logging.ERROR)
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s : %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    return logger
-
-
 # def connect_db(host, user, password, database):
 #     connection = connector.connect(
 #         user=user, password=password, host=host, database=database)
 #     return connection
-
-
-# conn = connect_db('localhost', '', '', 'DogsTinder')
-
-
-@app.route('/')
-def index():
-    return render_template('/index.html')
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    mycursor = connection.cursor()
-    message = ""
-    if request.method == 'POST':
-        try:
-            userDetails = request.form
-            username = userDetails['username']
-            unQuery = "SELECT username FROM users WHERE username = '" + username + "'"
-            mycursor.execute(unQuery)
-            username_from_db = mycursor.fetchall()
-            if username_from_db:
-                raise Exception('User name already Exists!')
-            password = userDetails["password1"]
-            password_confirm = userDetails["password2"]
-            if password != password_confirm:
-                raise Exception('Passwords does not match!')
-            password = sha256_crypt.encrypt(userDetails["password1"])
-            firstName = userDetails['firstName']
-            lastName = userDetails['lastName']
-            phone = userDetails['phone']
-            email = userDetails['email']
-            mycursor = connection.cursor()
-            sql = "INSERT INTO users (username, password, firstName, lastName, phone, email) VALUES (%s, %s, %s, %s, %s, %s)"
-            val = (username, password, firstName, lastName, phone, email)
-            mycursor.execute(sql, val)
-            connection.commit()
-            session['USERNAME'] = username
-            return redirect(url_for('homepage'))
-        except Exception as error:
-            message = str(error)
-
-    return render_template('/register.html', message=message)
 
 
 @app.route('/help')
@@ -250,45 +282,6 @@ def help():
     if uname:
         return render_template('/help.html')
     return redirect('login')
-
-
-def authenticate_user(username, password):
-    maulers = connection.cursor()
-    Fender = "SELECT username, password FROM users WHERE username = '" + username + "'"
-    maulers.execute(Fender)
-    result = maulers.fetchall()
-    print(result)
-    for user in result:
-        if sha256_crypt.verify(password, user[1]):
-            session["USERNAME"] = user[0]
-            return True
-        else:
-            raise Exception("Password doesn't match")
-    raise Exception("Username not found")
-
-
-def get_user_logged_in():
-    if "USERNAME" in session:
-        return session["USERNAME"]
-    return False
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    message = ""
-    if get_user_logged_in():
-        return redirect('homepage')
-
-    if request.method == "POST":
-        req = request.form
-        username = req.get("username")
-        password = req.get("password")
-        try:
-            authenticate_user(username, password)
-            return redirect(url_for('homepage'))
-        except Exception as error:
-            message = str(error)
-    return render_template('/login.html', message=message)
 
 
 @app.route('/updateUser', methods=['POST', 'GET'])
@@ -388,11 +381,11 @@ def adopted(dog_id):
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect('/')
+    return redirect('index')
 
 
 if __name__ == '__main__':
-     app.run(host='0.0.0.0', port=80, debug=True)
+     app.run(host='0.0.0.0', debug=True)
 
 
-mycursor.close()
+#mycursor.close()
