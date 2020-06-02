@@ -5,11 +5,6 @@ from flask import render_template, request, session, redirect, url_for, Flask
 from mysql import connector
 from passlib.hash import sha256_crypt
 
-# from passlib.hash import sha256_crypt as sha256
-# from flask_login import login_required, logout_user, current_user, login_user
-# from forms import LoginForm, SignupForm
-# from .models import db, User
-# from . import login_manager
 
 app = Flask(__name__)
 
@@ -268,12 +263,6 @@ def clearChoices(username):
     queryClear = "DELETE FROM likes WHERE username='" + username + "'"
     mycursor.execute(queryClear)
     connection.commit()
-
-
-# def connect_db(host, user, password, database):
-#     connection = connector.connect(
-#         user=user, password=password, host=host, database=database)
-#     return connection
 
 
 @app.route('/help')
