@@ -11,7 +11,7 @@ app = Flask(__name__)
 # !--- For debugging switch to true ---!
 app.debug = True
 
-UPLOAD_FOLDER = os.path.abspath(os.curdir) + 'static/images'
+UPLOAD_FOLDER = os.path.abspath('') + '/static/images'
 
 app.config["SECRET_KEY"] = "OCML3BRawWEUeaxcuKHLpw"
 #toolbar = DebugToolbarExtension(app)
