@@ -30,8 +30,12 @@ def definedlog(fileHandler):
 
 
 # Connect to the database
-connection = pymysql.connect("localhost", "root", "LoginPass@@12", "DogsTinder")
-mycursor = connection.cursor()
+def connect_db(host, user, password, database):
+    connection = connector.connect(
+        user=user, password=password, host=host, database=database)
+    return connection
+
+connection = connect_db("localhost", "root", "LoginPass@@12", "DogsTinder")
 
 
 @app.route('/')
@@ -136,8 +140,9 @@ def homepage():
 
         # add query for the filter in homepage
         if filter != "":
+          
             queryhomepage += " AND " + filter
-
+        mycursor = connection.cursor()
         mycursor.execute(queryhomepage)
         result = mycursor.fetchall()
         return render_template('homepage.html', dogs=result)
@@ -162,6 +167,7 @@ def create_dog_profile():
 
                 # check if chip already exists
                 chip = details['chip_number']
+                mycursor = connection.cursor()
                 mycursor.execute("SELECT dog_id FROM dogs WHERE dog_id = '" + chip + "'")
                 chip_from_db = mycursor.fetchall()
                 if (chip_from_db):
@@ -189,7 +195,7 @@ def create_dog_profile():
                     path2 = ''
                 img3 = request.files['img3']
                 if img3.filename != '':
-                    path3 = os.path.join('images/', img3.filename)
+                    path3 = os.path.join('sraimages/', img3.filename)
                     img3.save(os.path.join(UPLOAD_FOLDER, img3.filename))
                     photo3 = convertToBinaryData(
                         os.path.join(UPLOAD_FOLDER, img3.filename))
@@ -214,6 +220,7 @@ def create_dog_profile():
 
 @app.route("/dogProfile/<dog_id>")
 def dogProfile(dog_id):
+    mycursor = connection.cursor()
     uname = get_user_logged_in()
     if uname:
         queryDogProfile = "select * from dogs where dog_id=" + dog_id
@@ -231,6 +238,7 @@ def yes_button():
         dog_id = details['dog_id']
         answer = details['answer']
         if answer == 'yes' or answer == 'no':
+            mycursor = connection.cursor()
             mycursor.execute(
                 "INSERT INTO likes VALUES (%s, %s,%s)",
                 (username, dog_id, answer))
@@ -252,6 +260,7 @@ def favorites():
                 return redirect('/homepage')
         query_favorites = "select * from dogs left join likes on likes.dog_id = dogs.dog_id where likes.username='" + \
             username + "' AND answer='yes'"
+        mycursor = connection.cursor()
         mycursor.execute(query_favorites)
         dogs = mycursor.fetchall()
         connection.commit()
@@ -261,6 +270,7 @@ def favorites():
 
 def clearChoices(username):
     queryClear = "DELETE FROM likes WHERE username='" + username + "'"
+    mycursor = connection.cursor()
     mycursor.execute(queryClear)
     connection.commit()
 
@@ -275,6 +285,7 @@ def help():
 
 @app.route('/updateUser', methods=['POST', 'GET'])
 def updateUser():
+    mycursor = connection.cursor()
     uname = get_user_logged_in()
     if uname:
         mycursor.execute(
@@ -334,6 +345,7 @@ def updateUser():
 
 
 def showDogs():
+    mycursor = connection.cursor()
     un = session["USERNAME"]
     queryShowDogs = "select dog_id,name from dogs where username='" + un + "'"
     mycursor.execute(queryShowDogs)
@@ -353,6 +365,7 @@ def updateDog(dog_id):
 
 
 def deleteDog(dog_id):
+    mycursor = connection.cursor()
     queryDeleteDog = "DELETE FROM dogs WHERE dog_id =" + dog_id
     mycursor.execute(queryDeleteDog)
     connection.commit()
@@ -360,6 +373,7 @@ def deleteDog(dog_id):
 
 
 def adopted(dog_id):
+    mycursor = connection.cursor()
     mycursor.execute(
         "INSERT INTO adopted SELECT d.* FROM dogs AS d WHERE dog_id = " + dog_id)
     connection.commit()
