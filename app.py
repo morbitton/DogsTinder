@@ -195,7 +195,7 @@ def create_dog_profile():
                     path2 = ''
                 img3 = request.files['img3']
                 if img3.filename != '':
-                    path3 = os.path.join('sraimages/', img3.filename)
+                    path3 = os.path.join('images/', img3.filename)
                     img3.save(os.path.join(UPLOAD_FOLDER, img3.filename))
                     photo3 = convertToBinaryData(
                         os.path.join(UPLOAD_FOLDER, img3.filename))
