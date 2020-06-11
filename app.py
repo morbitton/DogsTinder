@@ -369,6 +369,9 @@ def deleteDog(dog_id):
     queryDeleteDog = "DELETE FROM dogs WHERE dog_id =" + dog_id
     mycursor.execute(queryDeleteDog)
     connection.commit()
+    queryDeletelikes = "DELETE FROM likes WHERE dog_id =" + dog_id
+    mycursor.execute(queryDeletelikes)
+    connection.commit()
     return True
 
 
