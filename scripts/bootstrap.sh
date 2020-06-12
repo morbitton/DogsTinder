@@ -34,7 +34,6 @@ pip3 install -r /vagrant/requirements.txt
     type VARCHAR(20) NOT NULL, details TEXT NOT NULL, pic1 BLOB NOT NULL,path1 TEXT NOT NULL, path2 TEXT, path3 TEXT, pic2 BLOB, pic3 BLOB, username VARCHAR(25));
     create table messages(message_id int NOT NULL AUTO_INCREMENT, username VARCHAR(25) NOT NULL, content text,
     create_date TIMESTAMP  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, primary key(message_id), foreign key(username) references users(username));
-    INSERT into users(username, password, firstName, lastName, phone, email) VALUES('morbi','mor311','mor','bitton','050-8371798','morbitton1993@gmail.com');
     DESCRIBE users;
     DESCRIBE dogs;
     DESCRIBE likes;

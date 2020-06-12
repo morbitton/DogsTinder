@@ -292,14 +292,14 @@ def updateUser():
             formDetails = request.form
             name = formDetails['name']
             if name != "":
-                sql = "UPDATE users SET first_name = '" + \
+                sql = "UPDATE users SET firstName = '" + \
                     name + "'  WHERE username = '" + uname + "'"
                 mycursor.execute(sql)
                 DBManager().connection.commit()
 
             lastname = formDetails['lastname']
             if lastname != "":
-                sql = "UPDATE users SET last_name = '" + \
+                sql = "UPDATE users SET lastName = '" + \
                     lastname + "'  WHERE username = '" + uname + "'"
                 mycursor.execute(sql)
                 DBManager().connection.commit()
