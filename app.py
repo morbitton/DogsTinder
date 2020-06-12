@@ -1,9 +1,12 @@
 import logging
 import os
 import pymysql
-from flask import render_template, request, session, redirect, url_for, Flask
+from model import DBManager, Message
+from flask import render_template, request, session, redirect, url_for, Flask, jsonify
 from mysql import connector
 from passlib.hash import sha256_crypt
+from flask_socketio import SocketIO, join_room, leave_room
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -11,11 +14,13 @@ app = Flask(__name__)
 # !--- For debugging switch to true ---!
 app.debug = True
 
-UPLOAD_FOLDER = os.path.abspath('') + '/static/images'
+UPLOAD_FOLDER = os.path.abspath(os.curdir) + '/static/images/'
 
 app.config["SECRET_KEY"] = "OCML3BRawWEUeaxcuKHLpw"
 #toolbar = DebugToolbarExtension(app)
 
+socketio = SocketIO(app, manage_session=False, cors_allowed_origins="*")
+chatClients = dict()
 
 def definedlog(fileHandler):
     logger = logging.getLogger(__name__)
@@ -29,23 +34,13 @@ def definedlog(fileHandler):
     return logger
 
 
-# Connect to the database
-def connect_db(host, user, password, database):
-    connection = connector.connect(
-        user=user, password=password, host=host, database=database)
-    return connection
-
-connection = connect_db("localhost", "root", "LoginPass@@12", "DogsTinder")
-
-
 @app.route('/')
 def index():
     return render_template('/index.html')
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    mycursor = connection.cursor()
+    mycursor = DBManager().getCursor()
     message = ""
     if request.method == 'POST':
         try:
@@ -65,11 +60,11 @@ def register():
             lastName = userDetails['lastName']
             phone = userDetails['phone']
             email = userDetails['email']
-            mycursor = connection.cursor()
+            mycursor = DBManager().getCursor()
             sql = "INSERT INTO users (username, password, firstName, lastName, phone, email) VALUES (%s, %s, %s, %s, %s, %s)"
             val = (username, password, firstName, lastName, phone, email)
             mycursor.execute(sql, val)
-            connection.commit()
+            DBManager.connection.commit()
             session['USERNAME'] = username
             return redirect(url_for('homepage'))
         except Exception as error:
@@ -97,7 +92,7 @@ def login():
 
 
 def authenticate_user(username, password):
-    maulers = connection.cursor()
+    maulers = DBManager().getCursor()
     Fender = "SELECT username, password FROM users WHERE username = '" + username + "'"
     maulers.execute(Fender)
     result = maulers.fetchall()
@@ -136,13 +131,14 @@ def homepage():
         queryhomepage = "SELECT * FROM dogs"
 
         # add query for excluding from likes table
-        queryhomepage += " WHERE dog_id NOT IN (SELECT dog_id FROM likes WHERE username='" + un + "')"
+        queryhomepage += " WHERE dog_id NOT IN (SELECT dog_id FROM likes WHERE username='" + un + "') " +\
+                        "AND username <> '" + un + "'"
 
         # add query for the filter in homepage
         if filter != "":
           
             queryhomepage += " AND " + filter
-        mycursor = connection.cursor()
+        mycursor = DBManager().getCursor()
         mycursor.execute(queryhomepage)
         result = mycursor.fetchall()
         return render_template('homepage.html', dogs=result)
@@ -167,7 +163,7 @@ def create_dog_profile():
 
                 # check if chip already exists
                 chip = details['chip_number']
-                mycursor = connection.cursor()
+                mycursor = DBManager().getCursor()
                 mycursor.execute("SELECT dog_id FROM dogs WHERE dog_id = '" + chip + "'")
                 chip_from_db = mycursor.fetchall()
                 if (chip_from_db):
@@ -207,7 +203,7 @@ def create_dog_profile():
                     "INSERT INTO dogs(dog_id,name,bday,gender,area,city, type,details,pic1,path1,pic2,path2,pic3,path3,username) VALUES (%s, %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
                     (chip, name, birth_date, gender, area, city, type, description, photo1, path1, photo2, path2, photo3, path3,
                     username))
-                connection.commit()
+                DBManager().connection.commit()
                 message = "Dog added successfully"
             except Exception as error:
                 message = str(error)
@@ -220,7 +216,7 @@ def create_dog_profile():
 
 @app.route("/dogProfile/<dog_id>")
 def dogProfile(dog_id):
-    mycursor = connection.cursor()
+    mycursor = DBManager().getCursor()
     uname = get_user_logged_in()
     if uname:
         queryDogProfile = "select * from dogs where dog_id=" + dog_id
@@ -233,17 +229,17 @@ def dogProfile(dog_id):
 @app.route("/favorites/add", methods=['POST'])
 def yes_button():
     username = get_user_logged_in()
-    if username:
+    if username and 'dog_id' in request.form:
         details = request.form
         dog_id = details['dog_id']
         answer = details['answer']
         if answer == 'yes' or answer == 'no':
-            mycursor = connection.cursor()
+            mycursor = DBManager().getCursor()
             mycursor.execute(
                 "INSERT INTO likes VALUES (%s, %s,%s)",
                 (username, dog_id, answer))
 
-        connection.commit()
+        DBManager().connection.commit()
         return 'success'
     return 'fail'
 
@@ -259,20 +255,21 @@ def favorites():
                 clearChoices(username)
                 return redirect('/homepage')
         query_favorites = "select * from dogs left join likes on likes.dog_id = dogs.dog_id where likes.username='" + \
-            username + "' AND answer='yes'"
-        mycursor = connection.cursor()
+            username + "' AND answer='yes' AND dogs.username <> '" + username + "'"
+        mycursor = DBManager().getCursor()
         mycursor.execute(query_favorites)
         dogs = mycursor.fetchall()
-        connection.commit()
+        DBManager().connection.commit()
+        DBManager().closeConnection()
         return render_template('favorites.html', dogs=dogs)
     return redirect('/login')
 
 
 def clearChoices(username):
     queryClear = "DELETE FROM likes WHERE username='" + username + "'"
-    mycursor = connection.cursor()
+    mycursor = DBManager().getCursor()
     mycursor.execute(queryClear)
-    connection.commit()
+    DBManager().connection.commit()
 
 
 @app.route('/help')
@@ -285,7 +282,7 @@ def help():
 
 @app.route('/updateUser', methods=['POST', 'GET'])
 def updateUser():
-    mycursor = connection.cursor()
+    mycursor = DBManager().getCursor()
     uname = get_user_logged_in()
     if uname:
         mycursor.execute(
@@ -298,28 +295,28 @@ def updateUser():
                 sql = "UPDATE users SET first_name = '" + \
                     name + "'  WHERE username = '" + uname + "'"
                 mycursor.execute(sql)
-                connection.commit()
+                DBManager().connection.commit()
 
             lastname = formDetails['lastname']
             if lastname != "":
                 sql = "UPDATE users SET last_name = '" + \
                     lastname + "'  WHERE username = '" + uname + "'"
                 mycursor.execute(sql)
-                connection.commit()
+                DBManager().connection.commit()
 
             phone = formDetails["tel"]
             if phone != "":
                 sql = "UPDATE users SET phone = '" + phone + \
                     "'  WHERE username = '" + uname + "'"
                 mycursor.execute(sql)
-                connection.commit()
+                DBManager().connection.commit()
 
             mail = formDetails['mail']
             if mail != "":
                 sql = "UPDATE users SET email = '" + mail + \
                     "'  WHERE username = '" + uname + "'"
                 mycursor.execute(sql)
-                connection.commit()
+                DBManager().connection.commit()
 
             newpass = formDetails["newpass"]
             renewpass = formDetails["confirm"]
@@ -331,7 +328,7 @@ def updateUser():
                     sql = "UPDATE users SET password='" + newpass + "', repassword='" + \
                         renewpass + "' where username='" + uname + "'"
                     mycursor.execute(sql)
-                    connection.commit()
+                    DBManager().connection.commit()
 
             message = "your details were updates successfully"
             mycursor.execute(
@@ -345,7 +342,7 @@ def updateUser():
 
 
 def showDogs():
-    mycursor = connection.cursor()
+    mycursor = DBManager().getCursor()
     un = session["USERNAME"]
     queryShowDogs = "select dog_id,name from dogs where username='" + un + "'"
     mycursor.execute(queryShowDogs)
@@ -365,30 +362,188 @@ def updateDog(dog_id):
 
 
 def deleteDog(dog_id):
-    mycursor = connection.cursor()
+    mycursor = DBManager().getCursor()
     queryDeleteDog = "DELETE FROM dogs WHERE dog_id =" + dog_id
     mycursor.execute(queryDeleteDog)
-    connection.commit()
-    queryDeletelikes = "DELETE FROM likes WHERE dog_id =" + dog_id
-    mycursor.execute(queryDeletelikes)
-    connection.commit()
+    DBManager().connection.commit() 
+    queryDeleteDog = "DELETE FROM likes WHERE dog_id =" + dog_id
+    mycursor.execute(queryDeleteDog)
+    DBManager().connection.commit()
     return True
-
+     
 
 def adopted(dog_id):
-    mycursor = connection.cursor()
+    mycursor = DBManager().getCursor()
     mycursor.execute(
         "INSERT INTO adopted SELECT d.* FROM dogs AS d WHERE dog_id = " + dog_id)
-    connection.commit()
+    DBManager().connection.commit()
     deleteDog(dog_id)
     return True
 
+#region chat_logic
+def add_message_to_db(msg: Message) -> bool:
+    message_id = None
+    if msg.receiver and msg.content.strip() != '':
+        mycursor = DBManager.getCursor()
+        sql = "INSERT INTO messages (sender_username, receiver_username, content, sending_date) VALUES (%s, %s, %s, %s)"
+        val = (msg.sender, msg.receiver, msg.content, msg.date)
+        try:
+            mycursor.execute(sql, val)
+            DBManager.connection.commit()
+            message_id = mycursor.lastrowid
+            print(f'inserted message with id {message_id}')
+        except Exception as error:
+            print(f'error in add_message_to_db: {str(error)}')
+    return message_id
+
+def get_all_chats(sender_username):
+    view = []
+    try:
+        mycursor = DBManager.getCursor()
+        mycursor.execute("SELECT d.username FROM dogs d " +
+                            "INNER JOIN likes l ON l.dog_id = d.dog_id " +
+                            "WHERE l.username=%(sender)s " +
+                            "AND d.dog_id NOT IN (SELECT dog_id FROM adopted) " +
+                            "AND d.username <> %(sender)s " +
+                            "AND l.answer='yes'" + 
+                            "UNION " +
+                            "SELECT l.username FROM dogs d " +
+                            "INNER JOIN likes l ON l.dog_id = d.dog_id " +
+                            "WHERE d.username=%(sender)s " +
+                            "AND l.username <> %(sender)s " +
+                            "AND l.answer='yes'" +
+                            "AND d.dog_id NOT IN (SELECT dog_id FROM adopted) " +
+                        "ORDER BY 1 ASC", { 'sender': sender_username, })
+        view = mycursor.fetchall()
+        DBManager.closeConnection()
+    except Exception as error:
+        print(f'error in get_all_chats: {str(error)}')
+    return view
+
+def get_all_messages(sender, receiver):
+    view = []
+    try:
+        mycursor = DBManager.getCursor()
+        mycursor.execute("SELECT * FROM messages WHERE (sender_username = %(sender)s AND receiver_username = %(receiver)s) " +
+                        "OR (receiver_username = %(sender)s AND sender_username = %(receiver)s)" +
+                        "ORDER BY sending_date ASC", { 'sender': sender, 
+                                                        'receiver': receiver})
+        view = mycursor.fetchall()
+        DBManager.closeConnection()
+    except Exception as error:
+        print(f'error in get_all_messages: {str(error)}')
+    return view
+
+
+def join_chat(chatRoom):
+    uname = get_user_logged_in()
+    if uname not in chatClients or chatClients[uname] != chatRoom:
+        # leave last room before connecting to another
+        if uname in chatClients:
+            leave_room(chatClients[uname])
+        
+        chatClients[uname] = chatRoom
+        join_room(chatRoom)
+        print(uname + ' has entered the room ' + chatRoom) 
+
+
+@app.route("/chat/<receiver_username>", methods=['GET', 'POST'])
+@app.route("/chat/", defaults={'receiver_username':''})
+def chat(receiver_username=None):
+    username = get_user_logged_in()
+    if username:
+        chatsList = get_all_chats(username)
+        return render_template('chat.html', chats=chatsList)
+    return redirect('/login')
+
+
+@app.route("/chat_messages/<receiver_username>", methods=['GET', 'POST'])
+def chat_messages(receiver_username):
+    messagesList = []
+    username = get_user_logged_in()
+
+    if username and receiver_username:
+        chatsList = get_all_chats(username)
+
+        # make sure chat exists before getting messages
+        if receiver_username and (f'{receiver_username}',) in chatsList:
+            messagesList = get_all_messages(username, receiver_username)
+            return render_template('chatMessages.html', messages=messagesList)
+    raise Exception(f'Failed when trying to fetch chat messages for {receiver_username}')
+
+
+@socketio.on('connection')
+def handle_connection(data):
+    uname = get_user_logged_in()
+    print(f'{uname} has connected')
+    
+@socketio.on('disconnect')
+def handle_disconnect():
+    uname = get_user_logged_in()
+    print(f'{uname} has disconnected')
+
+
+@socketio.on('join_chat')
+def on_join(data):
+    if data and 'receiver' in data:
+        receiver_username = data['receiver']
+        chatRoom = f'{request.sid}#{receiver_username}'
+        join_chat(chatRoom)
+
+@socketio.on('leave_chat')
+def on_leave(data):
+    uname = get_user_logged_in()
+    if uname and uname in chatClients:
+        del chatClients[uname]
+    if uname and 'CHAT_ROOM' in session: 
+        receiver_username = session['CHAT_ROOM']
+        chatRoom = f'{request.sid}#{receiver_username}'
+        leave_room(chatRoom)
+
+        print(uname + ' has left the room ' + chatRoom)
+
+@socketio.on('send_message')
+def send_message(json, methods=['GET', 'POST']):
+    print('received my event: ' + str(json))
+    sender_username = get_user_logged_in()
+    # check if there is a receiver for the message before sending
+    #if 'CHAT_ROOM' in session:
+    #  receiver_username = session.get('CHAT_ROOM', None)
+    if sender_username in chatClients:
+        receiver_username = chatClients[sender_username].split("#")[1]
+        content = json['message']
+        sending_date = datetime.now()
+        sending_date_formated = sending_date.strftime('%Y-%m-%d %H:%M:%S')
+                
+        print(f'message: {content} from { sender_username } to { receiver_username }')
+        
+        # insert message to db
+        msg = Message(sender_username, receiver_username, content, sending_date_formated)
+        msg.id = add_message_to_db(msg)
+
+        if msg.id:
+            print(f'Message {msg.id} was inserted')
+
+            # get template of message
+            msgArray = [[msg.id, msg.sender, msg.receiver, msg.content, sending_date]]
+            # approve message was sent to the client
+            # if sender_username in chatClients and chatClients[sender_username].split("#")[1] == receiver_username:
+            socketio.emit('message_received', render_template('chatMessages.html', messages=msgArray), room=chatClients[sender_username])
+
+            # make sure receiver is in chat room with the sender
+            if receiver_username in chatClients and chatClients[receiver_username].split("#")[1] == sender_username:
+                socketio.emit('message_received', render_template('chatMessages.html', messages=msgArray, logged_in_user=msg.receiver), room=chatClients[receiver_username])
+        else:
+            print('insertion failed')
+    else:
+        print('chat room wasnt open with the receiver')
+#endregion
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
-
 if __name__ == '__main__':
-     app.run(host='0.0.0.0', debug=True)
+     socketio.run(app, host='0.0.0.0', debug=True)
+     pass

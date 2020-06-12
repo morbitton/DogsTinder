@@ -5,3 +5,4 @@ passlib
 flask-debugtoolbar
 pyzbar
 dnspython
+flask-socketio
