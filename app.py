@@ -60,6 +60,11 @@ def register():
             lastName = userDetails['lastName']
             phone = userDetails['phone']
             email = userDetails['email']
+            result1 = email.find('@GMAIL.com')
+            result2 = email.find('@gmail.com')
+            if result1 == -1 and result2 == -1:
+                error = 'you have to put gmail account in order to use our app'
+                raise Exception(error)
             mycursor = DBManager().getCursor()
             sql = "INSERT INTO users (username, password, firstName, lastName, phone, email) VALUES (%s, %s, %s, %s, %s, %s)"
             val = (username, password, firstName, lastName, phone, email)
@@ -289,51 +294,59 @@ def updateUser():
             "SELECT * FROM users WHERE username = '" + uname + "'")
         user = mycursor.fetchall()
         if request.method == 'POST':
-            formDetails = request.form
-            name = formDetails['name']
-            if name != "":
-                sql = "UPDATE users SET firstName = '" + \
-                    name + "'  WHERE username = '" + uname + "'"
-                mycursor.execute(sql)
-                DBManager().connection.commit()
-
-            lastname = formDetails['lastname']
-            if lastname != "":
-                sql = "UPDATE users SET lastName = '" + \
-                    lastname + "'  WHERE username = '" + uname + "'"
-                mycursor.execute(sql)
-                DBManager().connection.commit()
-
-            phone = formDetails["tel"]
-            if phone != "":
-                sql = "UPDATE users SET phone = '" + phone + \
-                    "'  WHERE username = '" + uname + "'"
-                mycursor.execute(sql)
-                DBManager().connection.commit()
-
-            mail = formDetails['mail']
-            if mail != "":
-                sql = "UPDATE users SET email = '" + mail + \
-                    "'  WHERE username = '" + uname + "'"
-                mycursor.execute(sql)
-                DBManager().connection.commit()
-
-            newpass = formDetails["newpass"]
-            renewpass = formDetails["confirm"]
-
-            if (newpass != "") & (renewpass != ""):
-                if newpass == renewpass:
-                    newpass = sha256_crypt.encrypt(newpass)
-                    renewpass = sha256_crypt.encrypt(renewpass)
-                    sql = "UPDATE users SET password='" + newpass + "', repassword='" + \
-                        renewpass + "' where username='" + uname + "'"
+            try:
+                formDetails = request.form
+                name = formDetails['name']
+                if name != "":
+                    sql = "UPDATE users SET firstName = '" + \
+                        name + "'  WHERE username = '" + uname + "'"
                     mycursor.execute(sql)
                     DBManager().connection.commit()
 
-            message = "your details were updates successfully"
-            mycursor.execute(
-                "SELECT * FROM users WHERE username = '" + uname + "'")
-            user = mycursor.fetchall()
+                lastname = formDetails['lastname']
+                if lastname != "":
+                    sql = "UPDATE users SET lastName = '" + \
+                        lastname + "'  WHERE username = '" + uname + "'"
+                    mycursor.execute(sql)
+                    DBManager().connection.commit()
+
+                phone = formDetails["tel"]
+                if phone != "":
+                    sql = "UPDATE users SET phone = '" + phone + \
+                        "'  WHERE username = '" + uname + "'"
+                    mycursor.execute(sql)
+                    DBManager().connection.commit()
+
+                mail = formDetails['mail']
+                if mail != "":
+                    result1 = mail.find('@GMAIL.com')
+                    result2 = mail.find('@gmail.com')
+                    if result1 == -1 and result2 == -1:
+                        error = 'you have to put gmail account in order to use our app'
+                        raise Exception(error)
+                    sql = "UPDATE users SET email = '" + mail + \
+                        "'  WHERE username = '" + uname + "'"
+                    mycursor.execute(sql)
+                    DBManager().connection.commit()
+
+                newpass = formDetails["newpass"]
+                renewpass = formDetails["confirm"]
+
+                if (newpass != "") & (renewpass != ""):
+                    if newpass == renewpass:
+                        newpass = sha256_crypt.encrypt(newpass)
+                        renewpass = sha256_crypt.encrypt(renewpass)
+                        sql = "UPDATE users SET password='" + newpass + "', repassword='" + \
+                            renewpass + "' where username='" + uname + "'"
+                        mycursor.execute(sql)
+                        DBManager().connection.commit()
+
+                message = "your details were updates successfully"
+                mycursor.execute(
+                    "SELECT * FROM users WHERE username = '" + uname + "'")
+                user = mycursor.fetchall()
+            except Exception as error:
+                message = str(error)
         else:
             message = ""
 
