@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
 config.vm.define "ubuntu" do |ubuntu|
    ubuntu.vm.box = "ubuntu/bionic64"
    ubuntu.vm.provider "virtualbox" do |v|
-     v.memory = 1024
+     v.memory = 2048
   end
 end
 
