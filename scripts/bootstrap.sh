@@ -28,7 +28,7 @@ pip3 install -r /vagrant/requirements.txt
     create table users(username VARCHAR(25) NOT NULL, password VARCHAR(100) NOT NULL, firstName VARCHAR(25) NOT NULL, lastName VARCHAR(25) NOT NULL,
     phone VARCHAR(11) NOT NULL, email VARCHAR(50) NOT NULL, create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY(username));
     create table dogs(dog_id VARCHAR(10) NOT NULL, name VARCHAR(25) NOT NULL, bday DATE NOT NULL, gender VARCHAR(9) NOT NULL, area VARCHAR(20) NOT NULL, city VARCHAR(50) NOT NULL,
-    type VARCHAR(20) NOT NULL, details TEXT NOT NULL, pic1 BLOB NOT NULL,path1 TEXT NOT NULL, pic2 BLOB, path2 TEXT, pic3 BLOB, path3 TEXT, username VARCHAR(25), primary key(dog_id), foreign key(username) references users(username));
+    type VARCHAR(20) NOT NULL, details TEXT NOT NULL, pic1 LONGBLOB NOT NULL,path1 TEXT NOT NULL, pic2 LONGBLOB, path2 TEXT, pic3 LONGBLOB, path3 TEXT, username VARCHAR(25), primary key(dog_id), foreign key(username) references users(username));
     create table likes(username varchar(25), dog_id int(11), answer varchar(10));
     create table adopted(dog_id VARCHAR(10) NOT NULL, name VARCHAR(25) NOT NULL, bday DATE NOT NULL, gender VARCHAR(9) NOT NULL, area VARCHAR(20) NOT NULL, city VARCHAR(50) NOT NULL,
     type VARCHAR(20) NOT NULL, details TEXT NOT NULL, pic1 BLOB NOT NULL,path1 TEXT NOT NULL, path2 TEXT, path3 TEXT, pic2 BLOB, pic3 BLOB, username VARCHAR(25));
