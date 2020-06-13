@@ -61,9 +61,12 @@ def register():
             lastName = userDetails['lastName']
             phone = userDetails['phone']
             email = userDetails['email']
-            result1 = email.find('@GMAIL.com')
+            result1 = email.find('@GMAIL.COM')
             result2 = email.find('@gmail.com')
-            if result1 == -1 and result2 == -1:
+            result3 = email.find('@gmail.COM')
+            result4 = email.find('@GMAIL.com')
+            result5 = email.find('@Gmail.com')
+            if result1 == -1 and result2 == -1 and result3 == -1 and result4 == -1 and result5 == -1:
                 error = 'you have to put gmail account in order to use our app'
                 raise Exception(error)
             mycursor = DBManager().getCursor()
@@ -351,15 +354,19 @@ def updateUser():
 
                 mail = formDetails['mail']
                 if mail != "":
-                    result1 = mail.find('@GMAIL.com')
+                    result1 = mail.find('@GMAIL.COM')
                     result2 = mail.find('@gmail.com')
-                    if result1 == -1 and result2 == -1:
+                    result3 = mail.find('@gmail.COM')
+                    result4 = mail.find('@GMAIL.com')
+                    result5 = mail.find('@Gmail.com')
+                    if result1 == -1 and result2 == -1 and result3 == -1 and result4 == -1 and result5 == -1 :
                         error = 'you have to put gmail account in order to use our app'
                         raise Exception(error)
-                    sql = "UPDATE users SET email = '" + mail + \
-                        "'  WHERE username = '" + uname + "'"
-                    mycursor.execute(sql)
-                    DBManager().connection.commit()
+                    else:
+                        sql = "UPDATE users SET email = '" + mail + "' where username = '" + uname + "'"
+                        mycursor.execute(sql)
+                        DBManager().connection.commit()
+                        message = "your details were updates successfully"
 
                 newpass = formDetails["newpass"]
                 renewpass = formDetails["confirm"]
@@ -367,13 +374,13 @@ def updateUser():
                 if (newpass != "") & (renewpass != ""):
                     if newpass == renewpass:
                         newpass = sha256_crypt.encrypt(newpass)
-                        renewpass = sha256_crypt.encrypt(renewpass)
-                        sql = "UPDATE users SET password='" + newpass + "', repassword='" + \
-                            renewpass + "' where username='" + uname + "'"
+                        sql = "UPDATE users SET password='" + newpass + "' where username='" + uname + "'"
                         mycursor.execute(sql)
                         DBManager().connection.commit()
+                        message = "your details were updates successfully"
+                    else:
+                        message = "new password does NOT match to confirm password"
 
-                message = "your details were updates successfully"
                 mycursor.execute(
                     "SELECT * FROM users WHERE username = '" + uname + "'")
                 user = mycursor.fetchall()
