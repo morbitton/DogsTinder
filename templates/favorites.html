@@ -40,7 +40,8 @@
 
                     <a class="btn goToProfile" href="/chat/{{ dog[14] }}">Send message to dog owner</a>
 
-                    <a class="btn goToProfile" href="#">Click here to schedule a meeting</a>
+                    <a class="btn goToProfile" href="{{ url_for('new_meeting', dog = dog[0] ) }}">Click here to schedule a meeting</a>
+
                 </div>
             </li>
             <br>

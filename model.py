@@ -17,14 +17,15 @@ class DBManager():
     def closeConnection(cls):
         if cls.connection and cls.connection.open:
             cls.connection.close()
-
+   
 class Message:
-    def __init__(self, sender, receiver, content, date):
+    def __init__(self, sender, receiver, content, date, meeting_proposal):
         self.id = None
         self.sender = sender
         self.receiver = receiver
         self.content = content
         self.date = date
+        self.meeting_proposal = meeting_proposal
 
     def serialize(self) -> dict:
         return {

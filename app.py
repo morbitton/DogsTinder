@@ -1,6 +1,7 @@
 import logging
 import os
 import pymysql
+import re
 from model import DBManager, Message
 from flask import render_template, request, session, redirect, url_for, Flask, jsonify
 from mysql import connector
@@ -270,6 +271,37 @@ def favorites():
     return redirect('/login')
 
 
+
+
+@app.route('/new_meeting', methods=['GET', 'POST'])
+def new_meeting():
+    '''
+    :return: new_meeting template
+    '''
+    return render_template('/new_meeting.html')
+
+@app.route("/favorites/add_meeting", methods=['POST'])
+def add_meeting():
+    '''
+    send a proposal for a meeting to dog owner
+    :return: homepage template
+    '''
+    mycursor = DBManager().getCursor()
+    details = request.form
+    username = get_user_logged_in()
+    mycursor.execute("select username from dogs where dog_id=" + details['dog'])
+    owner_username = mycursor.fetchone()
+    mycursor.execute("select name from dogs where dog_id=" + details['dog'])
+    dog_name = mycursor.fetchone()
+    DBManager().connection.commit()
+    sending_date = datetime.now()
+    sending_date_formated = sending_date.strftime('%Y-%m-%d %H:%M:%S')
+    date_time = details['time'].split('T')
+    # the template massage: 'Can I meet {} in {} in {} at {}?\nYes/No'
+    add_message_to_db(Message(username, owner_username[0], 'Can I meet ' + dog_name[0] + ' in ' + date_time[0] + ' in ' + date_time[1] + ' at ' + details['place'] + '?\nYes/No', sending_date_formated, 'True'))
+    return redirect('/homepage')
+
+
 def clearChoices(username):
     queryClear = "DELETE FROM likes WHERE username='" + username + "'"
     mycursor = DBManager().getCursor()
@@ -393,13 +425,26 @@ def adopted(dog_id):
     deleteDog(dog_id)
     return True
 
+
 #region chat_logic
 def add_message_to_db(msg: Message) -> bool:
     message_id = None
     if msg.receiver and msg.content.strip() != '':
         mycursor = DBManager.getCursor()
-        sql = "INSERT INTO messages (sender_username, receiver_username, content, sending_date) VALUES (%s, %s, %s, %s)"
-        val = (msg.sender, msg.receiver, msg.content, msg.date)
+        sql = "INSERT INTO messages (sender_username, receiver_username, content, sending_date, meeting_proposal) VALUES (%s, %s, %s, %s, %s)"
+        val = (msg.sender, msg.receiver, msg.content, msg.date, msg.meeting_proposal)
+        mycursor.execute('select * from messages where sender_username="' + msg.receiver + '" and receiver_username="' + msg.sender + '" order by sending_date Limit 1')
+        last_massage= mycursor.fetchone()
+        print(last_massage)
+        # check if the last message was a meeting proposal and the owner replied yes
+        if last_massage is not None and msg.content.lower() == 'yes' and last_massage[5] == 'True':
+            mycursor.execute("select email from users where username='" + msg.sender + "'")
+            owner_email = mycursor.fetchone()
+            mycursor.execute("select email from users where username='" + msg.receiver + "'")
+            username_email = mycursor.fetchone()
+            # extract name place and time from the meeting proposal message
+            matches = re.findall(r'Can I meet (\S+) in (\S+) in (\S+) at (.*?)\?\nYes/No', last_massage[3])[0]
+            os.system('python meeting\\create_meeting.py "' + matches[0] +'" "' + matches[3] + '" ' + matches[1] + 'T' + matches[2] + ' ' + owner_email[0] + ' ' + username_email[0])
         try:
             mycursor.execute(sql, val)
             DBManager.connection.commit()
@@ -408,6 +453,7 @@ def add_message_to_db(msg: Message) -> bool:
         except Exception as error:
             print(f'error in add_message_to_db: {str(error)}')
     return message_id
+
 
 def get_all_chats(sender_username):
     view = []
@@ -531,7 +577,7 @@ def send_message(json, methods=['GET', 'POST']):
         print(f'message: {content} from { sender_username } to { receiver_username }')
         
         # insert message to db
-        msg = Message(sender_username, receiver_username, content, sending_date_formated)
+        msg = Message(sender_username, receiver_username, content, sending_date_formated, 'False')
         msg.id = add_message_to_db(msg)
 
         if msg.id:
