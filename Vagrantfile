@@ -19,15 +19,15 @@ config.vm.define "stage" do |stage|
   stage.vm.provider :aws do |aws, override|
     
     stage.vm.provider :aws do |aws,override|
-     aws.keypair_name = "DogTinder"
+     aws.keypair_name = "Dogstinder"
      aws.ami = "ami-0987ee37af7792903"
      aws.instance_type = "t2.micro"
      aws.region = "eu-west-1"
-     aws.subnet_id = "subnet-ea3010a2"
-     aws.security_groups = "sg-0f39480a6f4adf517"
+     aws.subnet_id = "subnet-00f3615a"
+     aws.security_groups = "sg-0382bf3f2acdaaa7c"
      aws.associate_public_ip = true
      override.ssh.username = "ubuntu"
-     override.ssh.private_key_path = "~/.ssh/DogTinder.pem"
+     override.ssh.private_key_path = "~/.ssh/Dogstinder.pem"
    end
  end
 end
