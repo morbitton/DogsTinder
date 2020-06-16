@@ -1,4 +1,12 @@
 import pymysql
+import datetime
+
+db_config = {
+    'host': 'localhost',
+    'user': 'root',
+    'password': 'LoginPass@@12',
+    'database': 'DogsTinder'
+}
 
 class DBManager():
     connection: pymysql.Connection = None
@@ -10,7 +18,7 @@ class DBManager():
     @classmethod
     def getCursor(cls):
         if not cls.connection or not cls.connection.open:
-            cls.connection = pymysql.connect("localhost", "root", "LoginPass@@12", "DogsTinder")
+            cls.connection = pymysql.connect(**db_config)
         return cls.connection.cursor()
 
     @classmethod
@@ -19,7 +27,7 @@ class DBManager():
             cls.connection.close()
    
 class Message:
-    def __init__(self, sender, receiver, content, date, meeting_proposal):
+    def __init__(self, sender, receiver, content, date:datetime, meeting_proposal):
         self.id = None
         self.sender = sender
         self.receiver = receiver

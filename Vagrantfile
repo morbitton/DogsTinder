@@ -22,8 +22,8 @@ config.vm.define "stage" do |stage|
      aws.keypair_name = "Dogstinder"
      aws.ami = "ami-0987ee37af7792903"
      aws.instance_type = "t2.micro"
-     aws.region = "eu-west-1"
-     aws.subnet_id = "subnet-00f3615a"
+     aws.region = "us-west-2"
+     aws.subnet_id = "subnet-79577731"
      aws.security_groups = "sg-0382bf3f2acdaaa7c"
      aws.associate_public_ip = true
      override.ssh.username = "ubuntu"

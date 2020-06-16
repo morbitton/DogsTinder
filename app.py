@@ -2,6 +2,7 @@ import logging
 import os
 import pymysql
 import re
+import meeting
 from model import DBManager, Message
 from flask import render_template, request, session, redirect, url_for, Flask, jsonify
 from mysql import connector
@@ -9,13 +10,13 @@ from passlib.hash import sha256_crypt
 from flask_socketio import SocketIO, join_room, leave_room
 from datetime import datetime
 
-
 app = Flask(__name__)
 
 # !--- For debugging switch to true ---!
 app.debug = True
 
 UPLOAD_FOLDER = '/vagrant/static/images/'
+#UPLOAD_FOLDER = '/static/images/'
 
 app.config["SECRET_KEY"] = "OCML3BRawWEUeaxcuKHLpw"
 #toolbar = DebugToolbarExtension(app)
@@ -298,10 +299,11 @@ def add_meeting():
     dog_name = mycursor.fetchone()
     DBManager().connection.commit()
     sending_date = datetime.now()
-    sending_date_formated = sending_date.strftime('%Y-%m-%d %H:%M:%S')
+    #sending_date_formated = sending_date.strftime('%Y-%m-%d %H:%M:%S')
     date_time = details['time'].split('T')
     # the template massage: 'Can I meet {} in {} in {} at {}?\nYes/No'
-    add_message_to_db(Message(username, owner_username[0], 'Can I meet ' + dog_name[0] + ' in ' + date_time[0] + ' in ' + date_time[1] + ' at ' + details['place'] + '?\nYes/No', sending_date_formated, 'True'))
+    msg = Message(username, owner_username[0], 'Can I meet ' + dog_name[0] + ' in ' + date_time[0] + ' in ' + date_time[1] + ' at ' + details['place'] + '?\nYes/No', sending_date, 'True')
+    send_message(msg, False)
     return redirect('/homepage')
 
 
@@ -439,8 +441,8 @@ def add_message_to_db(msg: Message) -> bool:
     if msg.receiver and msg.content.strip() != '':
         mycursor = DBManager.getCursor()
         sql = "INSERT INTO messages (sender_username, receiver_username, content, sending_date, meeting_proposal) VALUES (%s, %s, %s, %s, %s)"
-        val = (msg.sender, msg.receiver, msg.content, msg.date, msg.meeting_proposal)
-        mycursor.execute('select * from messages where sender_username="' + msg.receiver + '" and receiver_username="' + msg.sender + '" order by sending_date Limit 1')
+        val = (msg.sender, msg.receiver, msg.content, msg.date.strftime('%Y-%m-%d %H:%M:%S'), msg.meeting_proposal)
+        mycursor.execute('select * from messages where sender_username="' + msg.receiver + '" and receiver_username="' + msg.sender + '" order by sending_date desc Limit 1')
         last_massage= mycursor.fetchone()
         print(last_massage)
         # check if the last message was a meeting proposal and the owner replied yes
@@ -451,7 +453,10 @@ def add_message_to_db(msg: Message) -> bool:
             username_email = mycursor.fetchone()
             # extract name place and time from the meeting proposal message
             matches = re.findall(r'Can I meet (\S+) in (\S+) in (\S+) at (.*?)\?\nYes/No', last_massage[3])[0]
-            os.system('python meeting\\create_meeting.py "' + matches[0] +'" "' + matches[3] + '" ' + matches[1] + 'T' + matches[2] + ' ' + owner_email[0] + ' ' + username_email[0])
+            #meeting_output = os.popen('python meeting//create_meeting.py "' + matches[0] +'" "' + matches[3] + '" ' + matches[1] + 'T' + matches[2] + ' ' + owner_email[0] + ' ' + username_email[0]).read()
+            #print(f'end creating meeting: {meeting_output}')
+            meeting.create_meeting(dog_name=matches[0], place=matches[3],  time=f'{matches[1]}T{matches[2]}', owner_email=owner_email[0], client_email=username_email[0])
+
         try:
             mycursor.execute(sql, val)
             DBManager.connection.commit()
@@ -569,7 +574,7 @@ def on_leave(data):
         print(uname + ' has left the room ' + chatRoom)
 
 @socketio.on('send_message')
-def send_message(json, methods=['GET', 'POST']):
+def on_send_message(json, methods=['GET', 'POST']):
     print('received my event: ' + str(json))
     sender_username = get_user_logged_in()
     # check if there is a receiver for the message before sending
@@ -579,30 +584,35 @@ def send_message(json, methods=['GET', 'POST']):
         receiver_username = chatClients[sender_username].split("#")[1]
         content = json['message']
         sending_date = datetime.now()
-        sending_date_formated = sending_date.strftime('%Y-%m-%d %H:%M:%S')
                 
         print(f'message: {content} from { sender_username } to { receiver_username }')
         
         # insert message to db
-        msg = Message(sender_username, receiver_username, content, sending_date_formated, 'False')
-        msg.id = add_message_to_db(msg)
-
-        if msg.id:
-            print(f'Message {msg.id} was inserted')
-
-            # get template of message
-            msgArray = [[msg.id, msg.sender, msg.receiver, msg.content, sending_date]]
-            # approve message was sent to the client
-            # if sender_username in chatClients and chatClients[sender_username].split("#")[1] == receiver_username:
-            socketio.emit('message_received', render_template('chatMessages.html', messages=msgArray), room=chatClients[sender_username])
-
-            # make sure receiver is in chat room with the sender
-            if receiver_username in chatClients and chatClients[receiver_username].split("#")[1] == sender_username:
-                socketio.emit('message_received', render_template('chatMessages.html', messages=msgArray, logged_in_user=msg.receiver), room=chatClients[receiver_username])
-        else:
-            print('insertion failed')
+        msg = Message(sender_username, receiver_username, content, sending_date, 'False')
+        send_message(msg, include_sender=True)
     else:
         print('chat room wasnt open with the receiver')
+
+def send_message(msg: Message, include_sender:bool):
+    # insert message to db
+    msg.id = add_message_to_db(msg)
+
+    # send message to client and reciever if insertion succeeded
+    if msg.id:
+        print(f'Message {msg.id} was inserted')
+
+         # get template of message
+        msgArray = [[msg.id, msg.sender, msg.receiver, msg.content, msg.date]]
+
+        if include_sender:
+            # approve message was sent to the client
+            socketio.emit('message_received', render_template('chatMessages.html', messages=msgArray), room=chatClients[msg.sender])
+
+        # make sure receiver is in chat room with the sender
+        if msg.receiver in chatClients and chatClients[msg.receiver].split("#")[1] == msg.sender:
+            socketio.emit('message_received', render_template('chatMessages.html', messages=msgArray, logged_in_user=msg.receiver), room=chatClients[msg.receiver])
+    else:
+        print('insertion failed')
 #endregion
 
 @app.route('/logout')

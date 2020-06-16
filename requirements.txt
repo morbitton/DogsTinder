@@ -1,3 +1,4 @@
+cryptography
 pymysql
 Flask
 mysql-connector-python
@@ -6,3 +7,5 @@ flask-debugtoolbar
 pyzbar
 dnspython
 flask-socketio
+google-api-python-client
+google-auth-oauthlib
