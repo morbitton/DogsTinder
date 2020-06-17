@@ -1,3 +1,14 @@
+class Hash
+  def slice(*keep_keys)
+    h = {}
+    keep_keys.each { |key| h[key] = fetch(key) if has_key?(key) }
+    h
+  end unless Hash.method_defined?(:slice)
+  def except(*less_keys)
+    slice(*keys - less_keys)
+  end unless Hash.method_defined?(:except)
+end
+
 Vagrant.configure("2") do |config|
 
   config.vm.synced_folder ".", "/vagrant", type: "rsync"
@@ -22,7 +33,7 @@ config.vm.define "stage" do |stage|
      aws.keypair_name = "Dogstinder"
      aws.ami = "ami-0987ee37af7792903"
      aws.instance_type = "t2.micro"
-     aws.region = "us-west-2"
+     aws.region = "eu-west-1"
      aws.subnet_id = "subnet-79577731"
      aws.security_groups = "sg-0382bf3f2acdaaa7c"
      aws.associate_public_ip = true
