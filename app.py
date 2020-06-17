@@ -324,6 +324,7 @@ def help():
 
 @app.route('/updateUser', methods=['POST', 'GET'])
 def updateUser():
+    message=None
     mycursor = DBManager().getCursor()
     uname = get_user_logged_in()
     if uname:
