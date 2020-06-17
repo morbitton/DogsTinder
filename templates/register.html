@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/register.css') }}">
-
+<link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.2.1/css/bootstrap.min.css">
     <style>
 
     </style>
@@ -45,7 +45,7 @@
                     </div>
 
                     <div>
-                        <label class="lb1"> *User Name: </label>
+                        <label class="lb1"> *NickName: </label>
                         <input class="cls" dir="ltr" type="text" name="username" autofocus required>
                     </div>
 
@@ -73,9 +73,8 @@
 
                     <p><b>*Required field</b></p>
                     <br>
-
-                    <input class="submit_reset" type="reset" value="Clear fields">
-                    <input class="submit_reset" type="submit" value="Sign up">
+					<a class="btn btn-light btn-lg" href="{{url_for('index') }}" role="button">Back</a>
+                    <input class="btn btn-primary" type="submit" value="Sign up">
 
 
                 </fieldset>
@@ -83,9 +82,11 @@
 
         </div>
 
-        <button id="backButton" type="button"><a href="{{url_for('index') }}">Back</a></button><br>
+        <br>
+
 
     </div>
+
 
 </body>
 </html>
