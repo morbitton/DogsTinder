@@ -14,5 +14,4 @@
 		  	$("#q4").click(function(){
 			$("#a4").toggle();
 		  });
-
 		});
