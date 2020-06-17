@@ -9,10 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/login.css') }}">
-
-    <style>
-
-    </style>
+	<link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.2.1/css/bootstrap.min.css">
 
 </head>
 
@@ -28,36 +25,31 @@
         </div>
 
         <div id="down">
-            <form id="form1" method="POST" action="">
+            <form id="form1" method="POST" action="" style="margin-top:-8%;">
 
                 <fieldset id="f1">
                     {{ message }}
                     <legend> Enter Login Details </legend>
 
                     <div>
-                        <input class="cls" dir="ltr" type="text" name="username" autofocus required>
-                        <label class="lb1"> :User Name* </label>
-
+                        <label class="lb1" style="margin-right:-5%;"> *User Name: </label>
+                        <input class="cls" dir="ltr" type="text" name="username" autofocus required >
                     </div>
                     <br>
                     <div>
+                        <label class="lb1" style="margin-right:-5%;"> *Password: </label>
                         <input class="cls" dir="ltr" type="password" name="password" required>
-                        <label class="lb1"> :Password* </label>
-
                     </div>
                     <br>
 
-                    <p id="must"><b>Required field*</b></p>
+                    <p id="must"><b>*Required field</b></p>
                     <br>
-                    <input class="submit_reset" type="reset" value="Clear fields">
-                    <input class="submit_reset" type="submit" value="Enter">
-
+					<a class="btn btn-light btn-lg" href="{{url_for('index') }}" role="button">Back</a>
+                    <input class="btn btn-primary btn-lg" type="submit" value="Enter">
 
                 </fieldset>
             </form>
         </div>
-
-        <button id="backButton" type="button"><a href="{{url_for('index') }}">Back</a></button><br>
 
     </div>
 

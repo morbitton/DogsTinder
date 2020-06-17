@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/create_dog_profile.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.2.1/css/bootstrap.min.css">
+
+<style>
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+	  -webkit-appearance: none;
+	  margin: 0;
+	}
+</style>
 
 </head>
 
@@ -99,8 +108,7 @@
                 <p id="must"><b>*Required field</b></p>
                 <br>
 
-                <input class="submit_reset" type="reset" value="Clear fields">
-                <input class="submit_reset" type="submit" value=" Create a profile">
+				<input class="btn btn-primary" type="submit" value="Create a profile">
 
 
             </fieldset>
@@ -119,9 +127,6 @@
                     DogsTinder©</b></p>
         </div>
     </footer>
-
-
-
 
 </body>
 
