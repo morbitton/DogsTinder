@@ -125,6 +125,8 @@ def get_user_logged_in():
 @app.route("/homepage", methods=['POST', 'GET'])
 def homepage():
     un = get_user_logged_in()
+    ge=''
+    ar=''
     if un:
         req = request.form
         filter = ""
@@ -132,12 +134,12 @@ def homepage():
             if req.get("filter") == 'submit':
                 ge = req.get("gender")
                 ar = req.get("area")
-                if ge and ar:
-                    filter = "gender='" + ge + "' and area ='" + ar + "'"
-                elif ge:
+                if ge != "all" and ar == "all":
                     filter = "gender='" + ge + "'"
-                elif ar:
+                elif ge == "all" and ar != "all":
                     filter = "area='" + ar + "'"
+                elif ge != "all" and ar != "all":
+                    filter = "gender='" + ge + "' and area ='" + ar + "'"
         queryhomepage = "SELECT * FROM dogs"
 
         # add query for excluding from likes table
@@ -151,7 +153,7 @@ def homepage():
         mycursor = DBManager().getCursor()
         mycursor.execute(queryhomepage)
         result = mycursor.fetchall()
-        return render_template('homepage.html', dogs=result)
+        return render_template('homepage.html', dogs=result,gender=ge,area=ar)
     return redirect('login')
 
 
@@ -624,3 +626,5 @@ def logout():
 if __name__ == '__main__':
      socketio.run(app, host='0.0.0.0', debug=True)
      pass
+
+
