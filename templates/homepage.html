@@ -22,21 +22,21 @@
     <form style="text-align:center" class="example" method="POST">
         <br>
         <div>
-            <select dir="ltr" name="gender">
-                <option></option>
-                <option value="male">Male</option>
-                <option value="Female">Female</option>
+            <select dir="ltr" name="gender" id="gender" data="gender">
+                <option value="all" {% if gender == 'all' %} selected {% endif %}>all</option>
+                <option value="male" {% if gender == 'male' %} selected {% endif %}>Male</option>
+                <option value="Female" {% if gender == 'Female' %} selected {% endif %}>Female</option>
             </select>
             <label><b> :Select gender </b> </label>
         </div>
 
         <br>
         <div>
-            <select dir="ltr" name="area">
-                <option></option>
-                <option value="North">North</option>
-                <option value="Center">Center</option>
-                <option value="South">South</option>
+            <select dir="ltr" name="area" id="area" data="area">
+                  <option value="all" {% if area == 'all' %} selected {% endif %} > all</option>
+                <option value="North"  {% if area == 'North' %} selected {% endif %}>North</option>
+                <option value="Center" {% if area == 'Center' %} selected {% endif %}>Center</option>
+                <option value="South" {% if area == 'South' %} selected {% endif %}>South</option>
             </select>
             <label><b> :Select collection area </b> </label>
         </div>
@@ -89,7 +89,6 @@
         </div>
     </footer>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="{{ url_for('static',filename='js/tinder.js') }}"></script>
     <!--<script src="{{ url_for('static',filename='js/homaPage.js') }}"></script>-->
 
@@ -112,6 +111,7 @@
                 },
             });
         });
+
 
 
 
