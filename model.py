@@ -1,7 +1,9 @@
 import pymysql
 import datetime
-
-
+import flask
+import operator
+from mysql import connector
+from sqlite3 import OperationalError
 
 db_config = {
     'host': 'localhost',
@@ -19,9 +21,13 @@ class DBManager():
     
     @classmethod
     def getCursor(cls):
-        if not cls.connection or not cls.connection.open:
-            cls.connection = pymysql.connect(**db_config)
+        try:
+            if not cls.connection or not cls.connection.open:
+                cls.connection = pymysql.connect(**db_config)
+        except OperationalError:
+            cls.connection.close        
         return cls.connection.cursor()
+
 
     @classmethod
     def closeConnection(cls):
