@@ -240,45 +240,7 @@ top:50px;
     background: seagreen;
 }
 
-.but-nope::after {
-    content: 'nope';
-    position: absolute;
-    top: -35px;
-    left: -150px;
-    font-size: 30px;
-    transform: rotate(-30deg);
-    background: firebrick;
-    padding: .2em .4em;
-    color: #fff;
-    display: block;
-    transition: 0.4s;
-    opacity: 0;
-}
 
-.but-nope:hover::after {
-    opacity: 1;
-    top: 100px;
-}
-
-.but-yay::after {
-    content: 'yep';
-    position: absolute;
-    top: -35px;
-    right: -150px;
-    font-size: 30px;
-    background: seagreen;
-    color: #fff;
-    padding: .2em .4em;
-    transform: rotate(30deg);
-    display: block;
-    transition: 0.4s;
-    opacity: 0;
-}
-
-.but-yay:hover::after {
-    opacity: 1;
-    top: 100px;
-}
 
 #results {
     opacity: 0;

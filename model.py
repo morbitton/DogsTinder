@@ -1,6 +1,8 @@
 import pymysql
 import datetime
 
+
+
 db_config = {
     'host': 'localhost',
     'user': 'root',

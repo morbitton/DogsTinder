@@ -1,3 +1,5 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
 <a href="{{ url_for('homepage') }}"> <img id="logo" src="{{ url_for('static', filename='images/logohebrew.png') }}"></a>
 <a href="{{ url_for('updateUser') }}"> <i class="fa fa-user" style="margin-left:10px;"></i> {{ session["USERNAME"] }}</a>
 <a href="{{ url_for('homepage') }}">Homepage</a>
