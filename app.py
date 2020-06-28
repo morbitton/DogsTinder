@@ -9,6 +9,8 @@ from mysql import connector
 from passlib.hash import sha256_crypt
 from flask_socketio import SocketIO, join_room, leave_room
 from datetime import datetime
+import pickle
+
 
 app = Flask(__name__)
 
@@ -49,7 +51,7 @@ def register():
             userDetails = request.form
             username = userDetails['username']
             unQuery = "SELECT username FROM users WHERE username = '" + username + "'"
-            mycursor.execute(unQuery)
+            mycursor.execute(unQuery, username)
             username_from_db = mycursor.fetchall()
             if username_from_db:
                 raise Exception('User name already Exists!')
