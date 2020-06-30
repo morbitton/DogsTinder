@@ -105,8 +105,8 @@ def login():
 
 def authenticate_user(username, password):
     maulers = DBManager().getCursor()
-    Fender = "SELECT username, password FROM users WHERE username = '" + username + "'"
-    maulers.execute(Fender)
+    Fender = "SELECT username, password FROM users WHERE username = %s"
+    maulers.execute(Fender, username)
     result = maulers.fetchall()
     print(result)
     for user in result:
